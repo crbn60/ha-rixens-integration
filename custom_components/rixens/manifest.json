@@ -1,0 +1,8 @@
+{
+  "domain": "rixens",
+  "name": "Rixens Integration",
+  "version": "0.0.1",
+  "iot_class": "local_polling",
+  "requirements": [],
+  "documentation": "https://github.com/crbn60/ha-rixen-integration"
+}

@@ -1,0 +1,21 @@
+{
+  "name": "Home Assistant Dev",
+  "image": "ghcr.io/home-assistant/devcontainer:latest",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "redhat.vscode-yaml"
+      ]
+    }
+  },
+  "postCreateCommand": "pip3 install -r requirements_test.txt",
+  // --- Auto-start Mock Service ---
+  "postStartCommand": "python3 mock_device.py &",
+  "portsAttributes": {
+    "8000": {
+      "label": "Mock Rixens Server",
+      "onAutoForward": "ignore"
+    }
+  }
+}
