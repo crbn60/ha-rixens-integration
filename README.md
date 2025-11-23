@@ -14,7 +14,7 @@ This integration polls the device's `status.xml` file for real-time data and sen
 * **Switches:** Toggle "Floor Heating" and "System Heat" on/off.
 * **Local Polling:** Works entirely locally; no cloud connection required.
 
-%% Flowchart for Data and Network Interaction
+```mermaid
 flowchart LR
     subgraph Home Assistant (HA)
         HA_UI[HA UI / Services]
@@ -40,7 +40,8 @@ flowchart LR
     R_API -- HTTP GET /interface.cgi?act=X&val=Y --> R_CONTROL
     R_CONTROL -- HTTP 200 OK --> R_API
     R_API -- Triggers --> R_COORD(Refresh)
-    
+```
+
 ## Installation
 
 ### Option 1: HACS (Recommended)
