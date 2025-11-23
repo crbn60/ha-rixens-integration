@@ -1,0 +1,15 @@
+colorlog>=6.10.1
+homeassistant
+home_assistant_intents
+mutagen
+aiohttp>=3.8.0
+async-timeout>=4.0.0
+yarl>=1.8.0
+pip>=21.3.1
+ruff>=0.14.6
+hassil
+numpy
+ha-ffmpeg
+PyTurboJPEG
+pyspeex_noise
+pymicro-vad

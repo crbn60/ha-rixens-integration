@@ -7,9 +7,9 @@ venv/
 *.egg-info/
 
 # --- Home Assistant Local Development ---
-# We ignore the entire config folder used for local testing
-# because it contains your specific IPs, passwords, and logs.
-config/
+# We ignore the entire config folder except for specific used files
+config/*
+!config/configuration.yaml
 
 # In case you run hass in the root by accident:
 home-assistant_v2.db

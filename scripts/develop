@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+set -e
+
+cd "$(dirname "$0")/.."
+
+# Create config dir if not present
+if [[ ! -d "${PWD}/config" ]]; then
+    mkdir -p "${PWD}/config"
+    cp -v "${PWD}/configuration.yaml.template" "${PWD}/config/configuration.yaml"
+    hass --config "${PWD}/config" --script ensure_config
+    hass --config "${PWD}/config" --script check_config
+fi
+
+# Set the path to custom_components
+## This let's us have the structure we want <root>/custom_components/rixens
+## while at the same time have Home Assistant configuration inside <root>/config
+## without resulting to symlinks.
+export PYTHONPATH="${PYTHONPATH}:${PWD}/custom_components"
+
+# Start Rixens controller mock service
+python3 "${PWD}/mock_device.py" &
+
+# Start Home Assistant
+hass --config "${PWD}/config" --debug

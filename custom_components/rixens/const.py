@@ -1,8 +1,12 @@
+# custom_components/rixens/const.py
+
 DOMAIN = "rixens"
-UPDATE_INTERVAL = 30
+UPDATE_INTERVAL = 10
+
+# Key used in config_entry.data (single base URL)
+RIXENS_URL = "rixens_url"
 
 # MAPPING: XML Key -> Action ID (integer)
-# IMPORTANT: Update these IDs to match your device's interface.cgi 'act' values
 CMD_MAP = {
     "setpoint": 1,
     "fanspeed": 2,

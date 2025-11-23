@@ -17,7 +17,7 @@ This project uses **VS Code Dev Containers** for a consistent environment.
 1. **Start Home Assistant:** In a terminal inside the container, run:
 
 ```bash
-hass -c ./config
+scripts/develop
 ```
 
 *Note: The mock server (`mock_device.py`) is automatically started in the background when the container launches and is accessible by Home Assistant.*

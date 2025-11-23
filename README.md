@@ -33,13 +33,17 @@ This integration polls the device's `status.xml` file for real-time data and sen
 
 ## Configuration
 
-Add the following to your `configuration.yaml` file. Replace the IP address with the static IP of your Rixens controller.
 
-```yaml
-rixens:
-  data_url: "[http://192.168.1.50/status.xml](http://192.168.1.50/status.xml)"
-  control_url: "[http://192.168.1.50/interface.cgi](http://192.168.1.50/interface.cgi)"
-```
+### Configuration (via UI)
+
+Add the integration via the Home Assistant UI. You will be prompted for the base URL of your Rixens controller (e.g. `http://192.168.1.50`).
+
+#### Polling Interval Option
+After setup, you can adjust the polling interval (how often the integration fetches data) via the integration's Options menu. The interval is in seconds (default: 10, range: 2–3600).
+
+**Example:**
+1. Go to *Settings > Devices & Services > Rixens > Options*.
+2. Set `Polling Interval` to your desired value (e.g. `30` for 30 seconds).
 
 ### Finding your IP Address
 

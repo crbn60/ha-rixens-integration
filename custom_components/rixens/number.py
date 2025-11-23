@@ -9,7 +9,24 @@ NUMBERS = {
 
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
-    coordinator = hass.data[DOMAIN]
+    coordinator = hass.data.get(DOMAIN)
+    if not coordinator:
+        _LOGGER = __import__("logging").getLogger(__name__)
+        _LOGGER.warning("No coordinator found in hass.data for legacy platform setup")
+        return
+    entities = []
+    for key, (name, min_val, max_val, step) in NUMBERS.items():
+        if key in CMD_MAP:
+            entities.append(
+                RixensNumber(
+                    coordinator, key, name, min_val, max_val, step, CMD_MAP[key]
+                )
+            )
+    async_add_entities(entities)
+
+
+async def async_setup_entry(hass, entry, async_add_entities):
+    coordinator = hass.data[DOMAIN][entry.entry_id]
     entities = []
     for key, (name, min_val, max_val, step) in NUMBERS.items():
         if key in CMD_MAP:

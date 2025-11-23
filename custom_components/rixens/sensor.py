@@ -4,16 +4,30 @@ from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from .const import DOMAIN
 
 SENSORS = {
-    "currenttemp": ("Current Temp", "°C", SensorDeviceClass.TEMPERATURE, 10),
+    "currenttemp": ("Temperature", "°C", SensorDeviceClass.TEMPERATURE, 10),
     "battv": ("Battery Voltage", "V", SensorDeviceClass.VOLTAGE, 10),
-    "flametemp": ("Flame Temp", "°C", SensorDeviceClass.TEMPERATURE, 100),
+    "flametemp": ("Flame Temperature", "°C", SensorDeviceClass.TEMPERATURE, 100),
     "currenthumidity": ("Humidity", "%", SensorDeviceClass.HUMIDITY, 100),
     "uptime": ("Uptime", "s", None, 1),
 }
 
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
-    coordinator = hass.data[DOMAIN]
+    # Backwards compatibility for YAML-style setup: coordinator stored at hass.data[DOMAIN]
+    coordinator = hass.data.get(DOMAIN)
+    if not coordinator:
+        _LOGGER = __import__("logging").getLogger(__name__)
+        _LOGGER.warning("No coordinator found in hass.data for legacy platform setup")
+        return
+    entities = []
+    for key, (name, unit, dev_class, divider) in SENSORS.items():
+        entities.append(RixensSensor(coordinator, key, name, unit, dev_class, divider))
+    async_add_entities(entities)
+
+
+async def async_setup_entry(hass, entry, async_add_entities):
+    # New-style setup using config entries. Coordinator is stored at hass.data[DOMAIN][entry.entry_id]
+    coordinator = hass.data[DOMAIN][entry.entry_id]
     entities = []
     for key, (name, unit, dev_class, divider) in SENSORS.items():
         entities.append(RixensSensor(coordinator, key, name, unit, dev_class, divider))
