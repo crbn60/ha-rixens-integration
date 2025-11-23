@@ -14,34 +14,6 @@ This integration polls the device's `status.xml` file for real-time data and sen
 * **Switches:** Toggle "Floor Heating" and "System Heat" on/off.
 * **Local Polling:** Works entirely locally; no cloud connection required.
 
-```mermaid
-flowchart LR
-    subgraph Home Assistant (HA)
-        HA_UI[HA UI / Services]
-    end
-    subgraph Rixens Integration (Custom Component)
-        R_COORD[DataUpdateCoordinator]
-        R_API[RixensApiClient]
-    end
-    subgraph Rixens Device (Local Network)
-        R_STATUS["status.xml (Data)"]
-        R_CONTROL["interface.cgi (Control)"]
-    end
-
-    %% Polling Flow (Every 30s)
-    R_COORD -- Scheduled Poll --> R_API
-    R_API -- HTTP GET /status.xml --> R_STATUS
-    R_STATUS -- XML Data --> R_API
-    R_API -- Parsed Dict --> R_COORD
-    R_COORD -- Update --> HA_UI
-
-    %% Control Flow (User Action)
-    HA_UI -- Service Call (e.g., set_value) --> R_API
-    R_API -- HTTP GET /interface.cgi?act=X&val=Y --> R_CONTROL
-    R_CONTROL -- HTTP 200 OK --> R_API
-    R_API -- Triggers --> R_COORD(Refresh)
-```
-
 ## Installation
 
 ### Option 1: HACS (Recommended)
