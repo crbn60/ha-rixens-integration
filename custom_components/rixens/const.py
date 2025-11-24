@@ -149,13 +149,6 @@ def _scale_temp_for_command(value: float) -> int:
     return int(value * RAW_TEMP_DIVISOR)
 
 
-def _to_float(raw: Any) -> float | None:
-    """Convert raw value to float if numeric."""
-    if isinstance(raw, (int, float)):
-        return float(raw)
-    return None
-
-
 # ------------------------------------------------------------------------------
 # Sensor Entity Definitions
 # Read-only entities for monitoring controller state

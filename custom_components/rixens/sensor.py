@@ -18,6 +18,7 @@ from .const import (
     DOMAIN,
     FAULT_PREFIX,
     SENSOR_ENTITIES,
+    FaultEntityConfig,
     SensorEntityConfig,
     create_fault_config,
 )
@@ -99,7 +100,7 @@ class RixensFaultSensor(CoordinatorEntity[RixensDataCoordinator], SensorEntity):
         self,
         coordinator: RixensDataCoordinator,
         entry: ConfigEntry,
-        config: Any,  # FaultEntityConfig
+        config: FaultEntityConfig,
     ) -> None:
         """Initialize the fault sensor."""
         super().__init__(coordinator)
