@@ -1,11 +1,12 @@
 """Tests for the Rixens integration initialization."""
+
+from unittest.mock import AsyncMock, patch
+
 import pytest
 from aioresponses import aioresponses
 from pytest_homeassistant_custom_component.common import MockConfigEntry
-from unittest.mock import AsyncMock, patch
 
-from custom_components.rixens.const import DOMAIN, CONF_HOST
-
+from custom_components.rixens.const import CONF_HOST, DOMAIN
 
 MOCK_STATUS_XML = """<?xml version="1.0" encoding="UTF-8"?>
 <status>
@@ -22,9 +23,10 @@ MOCK_STATUS_XML = """<?xml version="1.0" encoding="UTF-8"?>
 @pytest.mark.asyncio
 async def test_coordinator_refresh_with_mocked_response(hass):
     """Test coordinator refresh with mocked API responses."""
-    from custom_components.rixens.coordinator import RixensDataCoordinator
     from datetime import timedelta
-    
+
+    from custom_components.rixens.coordinator import RixensDataCoordinator
+
     # Create a mock config entry
     entry = MockConfigEntry(
         domain=DOMAIN,
@@ -34,7 +36,7 @@ async def test_coordinator_refresh_with_mocked_response(hass):
         unique_id="10.0.22.6",
         entry_id="test_entry_id",
     )
-    
+
     # Create coordinator
     coordinator = RixensDataCoordinator(
         hass=hass,
@@ -42,14 +44,14 @@ async def test_coordinator_refresh_with_mocked_response(hass):
         update_interval=timedelta(seconds=30),
         config_entry=entry,
     )
-    
+
     # Mock the HTTP response
     with aioresponses() as mock:
         mock.get("http://10.0.22.6/status.xml", status=200, body=MOCK_STATUS_XML)
-        
+
         # Perform refresh (not first_refresh as that requires specific entry state)
         await coordinator.async_refresh()
-        
+
         # Verify data was loaded
         assert coordinator.data is not None
         assert coordinator.data["currenttemp"] == 720
@@ -60,6 +62,6 @@ async def test_coordinator_refresh_with_mocked_response(hass):
 async def test_async_setup(hass):
     """Test async_setup returns True (YAML config not supported)."""
     from custom_components.rixens import async_setup
-    
+
     result = await async_setup(hass, {})
     assert result is True

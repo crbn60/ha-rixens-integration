@@ -15,14 +15,6 @@ def auto_enable_custom_integrations(enable_custom_integrations):
 
 
 @pytest.fixture
-async def mock_aiohttp_session(hass):
-    """Get the aiohttp session from hass to avoid thread cleanup issues."""
-    from homeassistant.helpers.aiohttp_client import async_get_clientsession
-
-    return async_get_clientsession(hass)
-
-
-@pytest.fixture
 def mock_config_entry():
     """Return a mock config entry."""
     return MockConfigEntry(
