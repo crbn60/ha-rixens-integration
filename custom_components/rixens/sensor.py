@@ -6,7 +6,7 @@ from typing import Any, Callable
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import TEMP_FAHRENHEIT, PERCENTAGE
+from homeassistant.const import UnitOfTemperature, PERCENTAGE
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
@@ -15,7 +15,7 @@ from .const import DOMAIN, ICON_MAP, RAW_TEMP_DIVISOR
 from .coordinator import RixensDataCoordinator
 
 
-dataclass
+@dataclass
 class SensorDescription:
     key: str
     name: str
@@ -28,7 +28,7 @@ SENSOR_MAP: list[SensorDescription] = [
     SensorDescription(
         key="currenttemp",
         name="Current Temperature",
-        unit_fn=lambda v: TEMP_FAHRENHEIT,
+        unit_fn=lambda v: UnitOfTemperature.FAHRENHEIT,
         value_fn=lambda v: v / RAW_TEMP_DIVISOR if isinstance(v, (int, float)) else v,
         icon=ICON_MAP.get("currenttemp"),
     ),
