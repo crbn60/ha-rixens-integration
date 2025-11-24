@@ -1,4 +1,5 @@
 """DataUpdateCoordinator for Rixens controller."""
+
 from __future__ import annotations
 
 import logging
@@ -17,7 +18,13 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class RixensDataCoordinator(DataUpdateCoordinator[dict[str, Any]]):
-    def __init__(self, hass: HomeAssistant, host: str, update_interval: timedelta, config_entry: ConfigEntry) -> None:
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        host: str,
+        update_interval: timedelta,
+        config_entry: ConfigEntry,
+    ) -> None:
         self.host = host
         self.config_entry = config_entry
         self.session = async_get_clientsession(hass)
@@ -32,6 +39,7 @@ class RixensDataCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         )
 
     async def _async_update_data(self) -> dict[str, Any]:
+        """Fetch data from the Rixens controller."""
         try:
             return await self.api.async_get_status()
         except Exception as err:

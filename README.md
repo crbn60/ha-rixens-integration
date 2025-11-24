@@ -35,10 +35,25 @@ Core goals:
 4. Add integration via UI and set host/poll interval.
 
 ## Configuration
+The integration uses **Config Flow** for UI-based setup (no YAML configuration needed).
+
 | Option | Purpose | Range | Default |
 |--------|---------|-------|---------|
 | Host/IP | Controller location | — | (required) |
 | Poll Interval | Fetch frequency (s) | 2–3600 | 15 |
+
+### Quick Setup
+1. Go to Settings → Devices & Services
+2. Click "Add Integration" and search for "Rixens MCS7"
+3. Enter your controller's host/IP address
+4. Adjust polling interval in options (optional)
+
+### Multi-Instance Support
+You can add multiple Rixens MCS7 controllers - each runs independently with its own polling interval and entities. Controllers are identified by their host/IP address (case-insensitive).
+
+**Detailed configuration guide:** See [docs/configuration.md](docs/configuration.md)
+
+**For contributors:** See [docs/config_flow_development.md](docs/config_flow_development.md)
 
 ## Entity Preview
 | Entity | Type | Writable | Source |
