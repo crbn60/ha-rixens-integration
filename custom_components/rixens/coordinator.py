@@ -1,4 +1,5 @@
 """DataUpdateCoordinator for Rixens controller."""
+
 from __future__ import annotations
 
 import logging
@@ -17,10 +18,18 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class RixensDataCoordinator(DataUpdateCoordinator[dict[str, Any]]):
-    def __init__(self, hass: HomeAssistant, host: str, update_interval: timedelta, config_entry: ConfigEntry) -> None:
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        host: str,
+        update_interval: timedelta,
+        config_entry: ConfigEntry,
+    ) -> None:
         self.config_entry = config_entry
         self.host = host
-        self.session: ClientSession = hass.helpers.aiohttp_client.async_get_clientsession()
+        self.session: ClientSession = (
+            hass.helpers.aiohttp_client.async_get_clientsession()
+        )
         self.api = RixensApiClient(host=self.host, session=self.session)
         super().__init__(
             hass,

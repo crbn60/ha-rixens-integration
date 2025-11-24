@@ -1,4 +1,5 @@
 """Async API client for the Rixens controller."""
+
 from __future__ import annotations
 
 import asyncio
@@ -16,7 +17,9 @@ CONTROL_ENDPOINT = "interface.cgi"
 
 
 class RixensApiClient:
-    def __init__(self, host: str, session: aiohttp.ClientSession, timeout: float = 10.0):
+    def __init__(
+        self, host: str, session: aiohttp.ClientSession, timeout: float = 10.0
+    ):
         self._host = host.strip().rstrip("/")
         self._session = session
         self._timeout = timeout
@@ -70,11 +73,14 @@ class RixensApiClient:
                             name_el = fault.find("name")
                             val_el = fault.find("value")
                             if name_el is not None and val_el is not None:
-                                data[f"fault_{name_el.text.strip()}"] = _coerce(val_el.text or "")
+                                data[f"fault_{name_el.text.strip()}"] = _coerce(
+                                    val_el.text or ""
+                                )
                     else:
                         recurse(child, key)
                 else:
                     data[key] = _coerce(child.text or "")
+
         recurse(root)
         return data
 

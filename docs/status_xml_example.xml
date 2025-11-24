@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Example status.xml from Rixens MCS7 controller -->
+<status>
+  <!-- Temperature readings (typically raw values needing scaling) -->
+  <currenttemp>720</currenttemp>
+  <setpoint>185</setpoint>
+  <enginetemp>850</enginetemp>
+  <floortemp>680</floortemp>
+  
+  <!-- Humidity -->
+  <currenthumidity>45</currenthumidity>
+  
+  <!-- Fan control -->
+  <fanspeed>75</fanspeed>
+  <fanenabled>1</fanenabled>
+  
+  <!-- Heat source enables (switches) -->
+  <engineenable>1</engineenable>
+  <electricenable>0</electricenable>
+  <floorenable>1</floorenable>
+  <glycol>0</glycol>
+  <thermenabled>1</thermenabled>
+  
+  <!-- State and status -->
+  <heaterstate>3</heaterstate>
+  
+  <!-- Infrastructure/diagnostics -->
+  <infra_ip>192.168.1.100</infra_ip>
+  <infra_netup>1</infra_netup>
+  <infra_dhcp>1</infra_dhcp>
+  <altitude>1500</altitude>
+  <runtime>345600</runtime>
+  
+  <!-- Battery voltage (raw value) -->
+  <battv>136</battv>
+  
+  <!-- Glow pin -->
+  <glowpin>0</glowpin>
+  
+  <!-- Faults (nested structure) -->
+  <heater1-faults>
+    <fault>
+      <name>AF</name>
+      <value>0</value>
+    </fault>
+    <fault>
+      <name>BF</name>
+      <value>0</value>
+    </fault>
+    <fault>
+      <name>CF</name>
+      <value>1</value>
+    </fault>
+  </heater1-faults>
+</status>

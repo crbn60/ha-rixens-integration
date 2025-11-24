@@ -1,18 +1,19 @@
 """Rixens MCS7 Home Assistant Integration core module."""
+
 from __future__ import annotations
 
-from datetime import timedelta
 import logging
+from datetime import timedelta
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.typing import ConfigType
 
 from .const import (
+    CONF_HOST,
+    DEFAULT_POLL_INTERVAL,
     DOMAIN,
     PLATFORMS,
-    DEFAULT_POLL_INTERVAL,
-    CONF_HOST,
 )
 from .coordinator import RixensDataCoordinator
 

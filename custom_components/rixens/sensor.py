@@ -1,109 +1,90 @@
 """Sensor platform for Rixens."""
+
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Any, Callable
+from typing import Any
 
-from homeassistant.components.sensor import SensorEntity
+from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import TEMP_FAHRENHEIT, PERCENTAGE
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN, ICON_MAP, RAW_TEMP_DIVISOR
+from .const import DOMAIN
 from .coordinator import RixensDataCoordinator
+from .entity_config import (
+    DeviceClass,
+    EntityType,
+    get_entities_by_type,
+    get_fault_entity_config,
+)
 
 
-dataclass
-class SensorDescription:
-    key: str
-    name: str
-    unit_fn: Callable[[Any], str | None] | None = None
-    value_fn: Callable[[Any], Any] | None = None
-    icon: str | None = None
-
-
-SENSOR_MAP: list[SensorDescription] = [
-    SensorDescription(
-        key="currenttemp",
-        name="Current Temperature",
-        unit_fn=lambda v: TEMP_FAHRENHEIT,
-        value_fn=lambda v: v / RAW_TEMP_DIVISOR if isinstance(v, (int, float)) else v,
-        icon=ICON_MAP.get("currenttemp"),
-    ),
-    SensorDescription(
-        key="currenthumidity",
-        name="Current Humidity",
-        unit_fn=lambda v: PERCENTAGE,
-        icon=ICON_MAP.get("currenthumidity"),
-    ),
-    SensorDescription(
-        key="heaterstate",
-        name="Heater State Code",
-        icon=ICON_MAP.get("heaterstate"),
-    ),
-    SensorDescription(
-        key="infra_ip",
-        name="Infrastructure IP",
-        icon=ICON_MAP.get("infra_ip"),
-    ),
-    SensorDescription(
-        key="runtime",
-        name="Heater Runtime Seconds",
-    ),
-]
-
-
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
+async def async_setup_entry(
+    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+) -> None:
+    """Set up Rixens sensor entities."""
     coordinator: RixensDataCoordinator = hass.data[DOMAIN][entry.entry_id]
     entities: list[RixensSensor] = []
     data = coordinator.data or {}
 
-    for desc in SENSOR_MAP:
-        if desc.key in data:
-            entities.append(RixensSensor(coordinator, entry, desc))
+    # Get all sensor configurations from entity_config
+    sensor_configs = get_entities_by_type(EntityType.SENSOR)
 
-    for key, value in data.items():
+    # Create entities for configured sensors that exist in data
+    for key, config in sensor_configs.items():
+        if key in data:
+            entities.append(RixensSensor(coordinator, entry, config))
+
+    # Create dynamic fault sensors
+    for key in data.keys():
         if key.startswith("fault_"):
-            entities.append(
-                RixensSensor(
-                    coordinator,
-                    entry,
-                    SensorDescription(
-                        key=key,
-                        name=f"Fault {key.removeprefix('fault_').upper()}",
-                        icon=ICON_MAP.get("fault"),
-                    ),
-                )
-            )
+            fault_name = key.removeprefix("fault_")
+            fault_config = get_fault_entity_config(fault_name)
+            entities.append(RixensSensor(coordinator, entry, fault_config))
 
     async_add_entities(entities)
 
 
 class RixensSensor(CoordinatorEntity[RixensDataCoordinator], SensorEntity):
+    """Rixens sensor entity."""
+
     _attr_has_entity_name = True
 
-    def __init__(self, coordinator: RixensDataCoordinator, entry: ConfigEntry, description: SensorDescription) -> None:
+    def __init__(
+        self, coordinator: RixensDataCoordinator, entry: ConfigEntry, config
+    ) -> None:
+        """Initialize the sensor."""
         super().__init__(coordinator)
-        self.entity_description = description
+        self._config = config
         self._entry = entry
-        self._attr_unique_id = f"{entry.entry_id}_{description.key}"
-        self._attr_name = description.name
-        self._attr_icon = description.icon
+        self._attr_unique_id = f"{entry.entry_id}_{config.key}"
+        self._attr_name = config.name
+        self._attr_icon = config.icon
+
+        # Set device class if specified
+        if config.device_class != DeviceClass.NONE:
+            if config.device_class == DeviceClass.TEMPERATURE:
+                self._attr_device_class = SensorDeviceClass.TEMPERATURE
+            elif config.device_class == DeviceClass.HUMIDITY:
+                self._attr_device_class = SensorDeviceClass.HUMIDITY
+            elif config.device_class == DeviceClass.VOLTAGE:
+                self._attr_device_class = SensorDeviceClass.VOLTAGE
+            elif config.device_class == DeviceClass.DURATION:
+                self._attr_device_class = SensorDeviceClass.DURATION
+
+        # Set entity category for diagnostic entities
+        if config.diagnostic:
+            self._attr_entity_category = "diagnostic"
 
     @property
     def native_value(self) -> Any:
-        raw = self.coordinator.data.get(self.entity_description.key)
-        if self.entity_description.value_fn:
-            try:
-                return self.entity_description.value_fn(raw)
-            except Exception:
-                return raw
-        return raw
+        """Return the state of the sensor."""
+        raw = self.coordinator.data.get(self._config.key)
+        # Apply scaling from entity config
+        return self._config.scale_value(raw)
 
     @property
     def native_unit_of_measurement(self) -> str | None:
-        if self.entity_description.unit_fn:
-            return self.entity_description.unit_fn(self.native_value)
-        return None
+        """Return the unit of measurement."""
+        return self._config.unit
