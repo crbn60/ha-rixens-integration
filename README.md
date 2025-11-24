@@ -53,6 +53,9 @@ Core goals:
 | sensor.rixens_heater_state_code | sensor | ❌ | heaterstate |
 | sensor.rixens_fault_AF | sensor | ❌ | fault_* |
 
+## Entity Mapping & Configuration
+See [docs/entity_mapping.md](docs/entity_mapping.md) for comprehensive entity definitions, scaling factors, and icon mappings.
+
 ## Control Mapping (Provisional)
 See [docs/act_map.md](docs/act_map.md) for ACT IDs.
 
