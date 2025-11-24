@@ -1,78 +1,69 @@
-# Rixens Integration for Home Assistant
+# Rixens MCS7 Home Assistant Integration
 
-[![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
-[![Maintainer](https://img.shields.io/badge/maintainer-%40crbn60-blue.svg)](https://github.com/crbn60)
+[![CI Status](https://github.com/crbn60/ha-rixens-integration/actions/workflows/ci.yml/badge.svg)](https://github.com/crbn60/ha-rixens-integration/actions/workflows/ci.yml)
+[![HACS](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Code Style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen.svg)](https://pre-commit.com/)
+![Python](https://img.shields.io/badge/Python-3.12+-3776AB)
 
-A custom Home Assistant integration to monitor and control **Rixens Hydronic Systems** (and compatible MCS controllers) via their local Wi-Fi interface.
+> Custom integration for the Rixens MCS7 hydronic heating controller, exposing status, temperatures, fan control, heat source flags, and more to Home Assistant with bidirectional control where supported.
 
-This integration polls the device's `status.xml` file for real-time data and sends commands via `interface.cgi` to adjust settings like temperature setpoints and fan speeds.
+## Overview
+Polls `status.xml` and sends control commands via `interface.cgi?act=<id>&val=<value>`. Configuration is UI-based (Config Flow + Options Flow); no YAML needed.
+
+Core goals:
+- Robust polling (DataUpdateCoordinator)
+- Clean entity modeling (sensor, number, switch)
+- Safe write operations with validation
+- Icons for clear dashboards
+- HACS-ready packaging
 
 ## Features
+| Area | Read | Write | Notes |
+|------|------|-------|-------|
+| Temperature & Humidity | ✅ | ❌ | Scaling configurable later |
+| Setpoint / Fan Speed | ✅ | ✅ | Numbers with range enforcement |
+| Heat Source Enables | ✅ | ✅ | Switches (engine, electric, floor, etc.) |
+| Fault Codes | ✅ | ❌ | Exposed as sensors (binary platform planned) |
+| Diagnostics (network, runtime) | ✅ | ❌ | Redacted in diagnostics export |
 
-* **Sensors:** Monitors current temperature, battery voltage, flame temperature, humidity, and uptime.
-* **Controls:** Adjust target temperature (Setpoint) and Fan Speed via Number entities.
-* **Switches:** Toggle "Floor Heating" and "System Heat" on/off.
-* **Local Polling:** Works entirely locally; no cloud connection required.
-
-## Installation
-
-### Option 1: HACS (Recommended)
-
-1. Open **HACS** in your Home Assistant instance.
-2. Click the **3 dots** in the top-right corner and select **Custom repositories**.
-3. Paste the URL of this repository: `https://github.com/crbn60/ha-rixens-integration`
-4. Select Category: **Integration**.
-5. Click **Add**, then click **Download** on the new card that appears.
-6. Restart Home Assistant.
-
-### Option 2: Manual Installation
-
-1. Download the `custom_components/rixens` folder from this repository.
-2. Copy the folder into your Home Assistant's `config/custom_components/` directory.
-3. Restart Home Assistant.
+## Installation (HACS Custom Repository)
+1. Install HACS.
+2. Add custom repo: `https://github.com/crbn60/ha-rixens-integration` (Integration category).
+3. Install, restart Home Assistant.
+4. Add integration via UI and set host/poll interval.
 
 ## Configuration
+| Option | Purpose | Range | Default |
+|--------|---------|-------|---------|
+| Host/IP | Controller location | — | (required) |
+| Poll Interval | Fetch frequency (s) | 2–3600 | 15 |
 
+## Entity Preview
+| Entity | Type | Writable | Source |
+|--------|------|----------|--------|
+| sensor.rixens_current_temperature | sensor | ❌ | currenttemp |
+| sensor.rixens_current_humidity | sensor | ❌ | currenthumidity |
+| number.rixens_setpoint | number | ✅ | setpoint |
+| number.rixens_fan_speed | number | ✅ | fanspeed |
+| switch.rixens_engineenable | switch | ✅ | engineenable |
+| switch.rixens_electricenable | switch | ✅ | electricenable |
+| switch.rixens_floorenable | switch | ✅ | floorenable |
+| sensor.rixens_heater_state_code | sensor | ❌ | heaterstate |
+| sensor.rixens_fault_AF | sensor | ❌ | fault_* |
 
-### Configuration (via UI)
+## Control Mapping (Provisional)
+See [docs/act_map.md](docs/act_map.md) for ACT IDs.
 
-Add the integration via the Home Assistant UI. You will be prompted for the base URL of your Rixens controller (e.g. `http://192.168.1.50`).
+## Disclaimer
+Heating equipment control can be sensitive. Use sane intervals and validate commands manually before automating.
 
-#### Polling Interval Option
-After setup, you can adjust the polling interval (how often the integration fetches data) via the integration's Options menu. The interval is in seconds (default: 10, range: 2–3600).
+## Contributing
+See CONTRIBUTING.md. Issues welcome for mapping updates, new entities, and enhancements.
 
-**Example:**
-1. Go to *Settings > Devices & Services > Rixens > Options*.
-2. Set `Polling Interval` to your desired value (e.g. `30` for 30 seconds).
+## License
+MIT License (see LICENSE).
 
-### Finding your IP Address
-
-You can usually find the IP address of your controller by looking at your router's client list. It typically appears with the hostname `RIXENS` or `MCS`.
-
-## Entities Created
-
-| Entity ID | Description | Type |
-| :--- | :--- | :--- |
-| `sensor.rixens_current_temp` | Current ambient temperature | Sensor |
-| `sensor.rixens_battery_voltage` | System voltage | Sensor |
-| `number.rixens_target_temperature` | Thermostat Setpoint | Number |
-| `number.rixens_fan_speed` | Fan Speed Control (0-100) | Number |
-| `switch.rixens_floor_heating` | Floor Loop Enable/Disable | Switch |
-| `switch.rixens_system_heat` | Main System Heat Switch | Switch |
-
-*(Note: Entity IDs use the `rixens_` prefix, derived from the domain name.)*
-
-## Debugging
-
-If you run into issues, you can enable debug logging to see exactly what XML the device is returning. Add this to your `configuration.yaml`:
-
-```yaml
-logger:
-  default: info
-  logs:
-    custom_components.rixens: debug
-```
-
-### Disclaimer
-
-This is an unofficial community integration. It is not affiliated with or supported by Rixens' Enterprises. Use at your own risk.
+---
+Initial scaffold; details will evolve.

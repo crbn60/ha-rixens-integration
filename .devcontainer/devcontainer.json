@@ -1,53 +1,19 @@
 {
-  "name": "crbn60/ha-rixens-integration",
-  "image": "mcr.microsoft.com/devcontainers/python:3.13",
-  "postCreateCommand": "scripts/setup",
+  "name": "Rixens HA Dev",
+  "dockerFile": "Dockerfile",
+  "postCreateCommand": "pip install -r requirements.txt -r requirements_test.txt && pip install pre-commit && pre-commit install",
   "customizations": {
     "vscode": {
       "extensions": [
-        "charliermarsh.ruff",
         "ms-python.python",
-        "ms-python.vscode-pylance",
-        "redhat.vscode-yaml",
-        "esbenp.prettier-vscode",
-        "GitHub.vscode-pull-request-github",
-        "GitHub.copilot",
-        "ryanluker.vscode-coverage-gutters"
-      ],
-      "settings": {
-        "files.eol": "\n",
-        "editor.tabSize": 4,
-        "editor.formatOnPaste": true,
-        "editor.formatOnSave": true,
-        "editor.formatOnType": false,
-        "files.trimTrailingWhitespace": true,
-        "python.analysis.typeCheckingMode": "basic",
-        "python.analysis.autoImportCompletions": true,
-        "python.defaultInterpreterPath": "/usr/local/bin/python",
-        "[python]": {
-          "editor.defaultFormatter": "charliermarsh.ruff"
-        }
-      }
+        "ms-python.black-formatter",
+        "ms-python.flake8",
+        "EditorConfig.EditorConfig"
+      ]
     }
   },
-  "remoteUser": "vscode",
-  "forwardPorts": [
-    8123,
-    8000
-  ],
-  "portsAttributes": {
-    "8123": {
-      "label": "Home Assistant",
-      "onAutoForward": "ignore"
-    },
-    "8000": {
-      "label": "Mock Rixens Server",
-      "onAutoForward": "ignore"
-    }
-  },
-  "features": {
-    "ghcr.io/devcontainers-extra/features/apt-packages:1": {
-      "packages": "ffmpeg,libturbojpeg0,libturbojpeg0-dev,libpcap-dev"
-    }
+  "forwardPorts": [8123],
+  "remoteEnv": {
+    "PYTHONUNBUFFERED": "1"
   }
 }

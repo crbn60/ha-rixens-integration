@@ -1,48 +1,52 @@
+"""Switch platform for Rixens (enable/disable sources)."""
+from __future__ import annotations
+
+from typing import Any
+
 from homeassistant.components.switch import SwitchEntity
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
-from .const import DOMAIN, CMD_MAP
 
-SWITCHES = {"floorenable": "Floor Heating", "systemheat": "System Heat"}
+from .const import DOMAIN, CMD_MAP, ICON_MAP
+from .coordinator import RixensDataCoordinator
+
+SWITCH_KEYS = ["engineenable", "electricenable", "floorenable", "fanenabled", "thermenabled"]
 
 
-async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
-    coordinator = hass.data.get(DOMAIN)
-    if not coordinator:
-        _LOGGER = __import__("logging").getLogger(__name__)
-        _LOGGER.warning("No coordinator found in hass.data for legacy platform setup")
-        return
-    entities = []
-    for key, name in SWITCHES.items():
-        if key in CMD_MAP:
-            entities.append(RixensSwitch(coordinator, key, name, CMD_MAP[key]))
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
+    coordinator: RixensDataCoordinator = hass.data[DOMAIN][entry.entry_id]
+    entities: list[RixensSwitch] = []
+
+    for key in SWITCH_KEYS:
+        if key in coordinator.data:
+            entities.append(RixensSwitch(coordinator, entry, key))
+
     async_add_entities(entities)
 
 
-async def async_setup_entry(hass, entry, async_add_entities):
-    coordinator = hass.data[DOMAIN][entry.entry_id]
-    entities = []
-    for key, name in SWITCHES.items():
-        if key in CMD_MAP:
-            entities.append(RixensSwitch(coordinator, key, name, CMD_MAP[key]))
-    async_add_entities(entities)
+class RixensSwitch(CoordinatorEntity[RixensDataCoordinator], SwitchEntity):
+    _attr_has_entity_name = True
 
-
-class RixensSwitch(CoordinatorEntity, SwitchEntity):
-    def __init__(self, coordinator, key, name, action_id):
+    def __init__(self, coordinator: RixensDataCoordinator, entry: ConfigEntry, key: str) -> None:
         super().__init__(coordinator)
         self._key = key
-        self._action_id = action_id
-        self._attr_name = name
-        self._attr_unique_id = f"rixens_{key}"
+        self._entry = entry
+        self._attr_unique_id = f"{entry.entry_id}_{key}"
+        self._attr_name = key
+        self._attr_icon = ICON_MAP.get(key)
 
     @property
-    def is_on(self):
-        return str(self.coordinator.data.get(self._key)) == "1"
+    def is_on(self) -> bool:
+        return bool(self.coordinator.data.get(self._key))
 
-    async def async_turn_on(self, **kwargs):
-        await self.coordinator.api.set_parameter(self._action_id, 1)
-        await self.coordinator.async_request_refresh()
+    async def async_turn_on(self, **kwargs: Any) -> None:
+        act = CMD_MAP.get(self._key)
+        if act is not None and await self.coordinator.api.async_set_value(act, 1):
+            await self.coordinator.async_request_refresh()
 
-    async def async_turn_off(self, **kwargs):
-        await self.coordinator.api.set_parameter(self._action_id, 0)
-        await self.coordinator.async_request_refresh()
+    async def async_turn_off(self, **kwargs: Any) -> None:
+        act = CMD_MAP.get(self._key)
+        if act is not None and await self.coordinator.api.async_set_value(act, 0):
+            await self.coordinator.async_request_refresh()

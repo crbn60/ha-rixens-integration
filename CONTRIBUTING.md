@@ -1,29 +1,41 @@
-# Contributing to Rixens
-
-Thank you for your interest in contributing! This project uses a **`dev`** branch for all ongoing development.
+# Contributing to Rixens MCS7 Integration
 
 ## Development Environment
+Use the DevContainer or Codespaces for a preconfigured Python 3.12 setup.
 
-This project uses **VS Code Dev Containers** for a consistent environment.
+1. Clone the repo or open in Codespaces.
+2. DevContainer installs dependencies and pre-commit hooks automatically.
 
-### Setup Steps
-
-1. **Fork** this repository (`crbn60/ha-rixens-integration`).
-2. Open the cloned folder in **VS Code**.
-3. Click **"Reopen in Container"** when prompted.
-
-## Local Testing Workflow
-
-1. **Start Home Assistant:** In a terminal inside the container, run:
-
-```bash
-scripts/develop
+## Running Home Assistant Locally
+Copy or symlink `custom_components/rixens` into your local HA config directory:
+```
+hass --debug
 ```
 
-*Note: The mock server (`mock_device.py`) is automatically started in the background when the container launches and is accessible by Home Assistant.*
-
-2. **Run Tests:** Before submitting, ensure all tests pass:
-
-```bash
-pytest tests/
+## Testing
 ```
+pytest -q
+```
+Add tests for:
+- Config flow
+- XML parsing (faults, nested elements)
+- Write operations (numbers / switches)
+- Coordinator error handling
+
+## Code Style
+Black, isort, and flake8 are enforced via pre-commit.
+
+## Branching & PRs
+Use `feature/<short-description>` and keep changes focused. Update docs (README, act_map) when adding entities or ACT mappings.
+
+## Control Mapping
+Adjust `CMD_MAP` in `const.py` once ACT IDs are verified. Update `docs/act_map.md`.
+
+## Reporting Issues
+Include:
+- Integration version & HA version
+- Debug logs (enable `custom_components.rixens`)
+- Sanitized `status.xml` snippet
+
+## License
+MIT License. Contributions are licensed under MIT.

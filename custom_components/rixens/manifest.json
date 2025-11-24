@@ -1,11 +1,1 @@
-{
-  "domain": "rixens",
-  "name": "Rixens",
-  "version": "0.1.0",
-  "config_flow": true,
-  "documentation": "https://github.com/crbn60/ha-rixens-integration",
-  "dependencies": [],
-  "codeowners": ["@crbn60"],
-  "requirements": ["yarl>=1.8.0"],
-  "iot_class": "local_polling"
-}
+{\n  "domain": "rixens",\n  "name": "Rixens MCS7 Controller",\n  "version": "0.0.1",\n  "documentation": "https://github.com/crbn60/ha-rixens-integration",\n  "issue_tracker": "https://github.com/crbn60/ha-rixens-integration/issues",\n  "requirements": [],\n  "codeowners": ["@crbn60"],\n  "iot_class": "local_polling",\n  "config_flow": true,\n  "loggers": ["custom_components.rixens"]\n}
