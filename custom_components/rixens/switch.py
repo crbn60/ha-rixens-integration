@@ -1,4 +1,5 @@
 """Switch platform for Rixens (enable/disable sources)."""
+
 from __future__ import annotations
 
 from typing import Any
@@ -9,13 +10,22 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN, CMD_MAP, ICON_MAP
+from .const import CMD_MAP, DOMAIN, ICON_MAP
 from .coordinator import RixensDataCoordinator
 
-SWITCH_KEYS = ["engineenable", "electricenable", "floorenable", "fanenabled", "thermenabled"]
+SWITCH_KEYS = [
+    "engineenable",
+    "electricenable",
+    "floorenable",
+    "glycol",
+    "fanenabled",
+    "thermenabled",
+]
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
+async def async_setup_entry(
+    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+) -> None:
     coordinator: RixensDataCoordinator = hass.data[DOMAIN][entry.entry_id]
     entities: list[RixensSwitch] = []
 
@@ -29,7 +39,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
 class RixensSwitch(CoordinatorEntity[RixensDataCoordinator], SwitchEntity):
     _attr_has_entity_name = True
 
-    def __init__(self, coordinator: RixensDataCoordinator, entry: ConfigEntry, key: str) -> None:
+    def __init__(
+        self, coordinator: RixensDataCoordinator, entry: ConfigEntry, key: str
+    ) -> None:
         super().__init__(coordinator)
         self._key = key
         self._entry = entry

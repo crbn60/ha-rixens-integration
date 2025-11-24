@@ -1,4 +1,5 @@
 """Number platform for Rixens (setpoint, fanspeed)."""
+
 from __future__ import annotations
 
 from typing import Any
@@ -9,16 +10,30 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN, CMD_MAP, ICON_MAP
+from .const import CMD_MAP, DOMAIN, ICON_MAP
 from .coordinator import RixensDataCoordinator
 
 NUMBER_ENTITIES = {
-    "setpoint": {"name": "Setpoint", "min": 90, "max": 220, "step": 1, "icon": ICON_MAP.get("setpoint")},
-    "fanspeed": {"name": "Fan Speed", "min": 0, "max": 100, "step": 1, "icon": ICON_MAP.get("fanspeed")},
+    "setpoint": {
+        "name": "Setpoint",
+        "min": 90,
+        "max": 220,
+        "step": 1,
+        "icon": ICON_MAP.get("setpoint"),
+    },
+    "fanspeed": {
+        "name": "Fan Speed",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "icon": ICON_MAP.get("fanspeed"),
+    },
 }
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
+async def async_setup_entry(
+    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+) -> None:
     coordinator: RixensDataCoordinator = hass.data[DOMAIN][entry.entry_id]
     entities: list[RixensNumber] = []
 
@@ -32,7 +47,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
 class RixensNumber(CoordinatorEntity[RixensDataCoordinator], NumberEntity):
     _attr_has_entity_name = True
 
-    def __init__(self, coordinator: RixensDataCoordinator, entry: ConfigEntry, key: str, meta: dict[str, Any]) -> None:
+    def __init__(
+        self,
+        coordinator: RixensDataCoordinator,
+        entry: ConfigEntry,
+        key: str,
+        meta: dict[str, Any],
+    ) -> None:
         super().__init__(coordinator)
         self._key = key
         self._attr_unique_id = f"{entry.entry_id}_{key}"

@@ -1,4 +1,5 @@
 """Constants for the Rixens integration."""
+
 DOMAIN = "rixens"
 
 CONF_HOST = "host"
@@ -29,6 +30,7 @@ ICON_MAP = {
     "engineenable": "mdi:engine",
     "electricenable": "mdi:flash",
     "floorenable": "mdi:floor-plan",
+    "glycol": "mdi:coolant-temperature",
     "heaterstate": "mdi:fire",
     "infra_ip": "mdi:ip-network",
     "battv": "mdi:car-battery",

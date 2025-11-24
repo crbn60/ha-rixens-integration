@@ -1,10 +1,11 @@
 """Tests for the Rixens config flow."""
+
 import pytest
 from homeassistant import config_entries
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 
-from custom_components.rixens.const import DOMAIN, CONF_HOST
+from custom_components.rixens.const import CONF_HOST, DOMAIN
 
 
 @pytest.mark.asyncio

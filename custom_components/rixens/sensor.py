@@ -1,4 +1,5 @@
 """Sensor platform for Rixens."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -6,7 +7,7 @@ from typing import Any, Callable
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import TEMP_FAHRENHEIT, PERCENTAGE
+from homeassistant.const import PERCENTAGE, TEMP_FAHRENHEIT
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
@@ -14,8 +15,9 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .const import DOMAIN, ICON_MAP, RAW_TEMP_DIVISOR
 from .coordinator import RixensDataCoordinator
 
-
 dataclass
+
+
 class SensorDescription:
     key: str
     name: str
@@ -55,7 +57,9 @@ SENSOR_MAP: list[SensorDescription] = [
 ]
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
+async def async_setup_entry(
+    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+) -> None:
     coordinator: RixensDataCoordinator = hass.data[DOMAIN][entry.entry_id]
     entities: list[RixensSensor] = []
     data = coordinator.data or {}
@@ -84,7 +88,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
 class RixensSensor(CoordinatorEntity[RixensDataCoordinator], SensorEntity):
     _attr_has_entity_name = True
 
-    def __init__(self, coordinator: RixensDataCoordinator, entry: ConfigEntry, description: SensorDescription) -> None:
+    def __init__(
+        self,
+        coordinator: RixensDataCoordinator,
+        entry: ConfigEntry,
+        description: SensorDescription,
+    ) -> None:
         super().__init__(coordinator)
         self.entity_description = description
         self._entry = entry

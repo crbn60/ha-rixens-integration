@@ -1,4 +1,5 @@
 """Async API client for the Rixens controller."""
+
 from __future__ import annotations
 
 import asyncio
@@ -16,7 +17,9 @@ CONTROL_ENDPOINT = "interface.cgi"
 
 
 class RixensApiClient:
-    def __init__(self, host: str, session: aiohttp.ClientSession, timeout: float = 10.0):
+    def __init__(
+        self, host: str, session: aiohttp.ClientSession, timeout: float = 10.0
+    ):
         self._host = host.strip().rstrip("/")
         self._session = session
         self._timeout = timeout
@@ -39,6 +42,15 @@ class RixensApiClient:
         return self._parse_xml(text)
 
     async def async_set_value(self, act: int, val: int) -> bool:
+        """Send a control command to the controller using act/val parameters.
+
+        Args:
+            act: The action/parameter ID to control
+            val: The value to set (typically 0/1 for boolean, or a numeric value)
+
+        Returns:
+            True if the command was sent successfully, False otherwise
+        """
         url = f"{self._base_url()}/{CONTROL_ENDPOINT}?act={act}&val={val}"
         async with self._lock:
             try:
@@ -52,6 +64,31 @@ class RixensApiClient:
                 _LOGGER.warning("Timeout setting act=%s val=%s", act, val)
                 return False
         return True
+
+    async def async_set_parameter(
+        self, param_name: str, value: int, cmd_map: dict[str, int]
+    ) -> bool:
+        """Set a parameter by name using CMD_MAP lookup.
+
+        This is a convenience method that looks up the act ID from CMD_MAP
+        and calls async_set_value with proper validation.
+
+        Args:
+            param_name: The parameter name (e.g., 'setpoint', 'fanspeed')
+            value: The value to set
+            cmd_map: Dictionary mapping parameter names to act IDs
+
+        Returns:
+            True if the command was sent successfully, False otherwise
+
+        Raises:
+            ValueError: If param_name is not found in cmd_map
+        """
+        if param_name not in cmd_map:
+            raise ValueError(f"Parameter '{param_name}' not found in CMD_MAP")
+
+        act = cmd_map[param_name]
+        return await self.async_set_value(act, value)
 
     def _parse_xml(self, xml_str: str) -> dict[str, Any]:
         try:
@@ -70,11 +107,14 @@ class RixensApiClient:
                             name_el = fault.find("name")
                             val_el = fault.find("value")
                             if name_el is not None and val_el is not None:
-                                data[f"fault_{name_el.text.strip()}"] = _coerce(val_el.text or "")
+                                data[f"fault_{name_el.text.strip()}"] = _coerce(
+                                    val_el.text or ""
+                                )
                     else:
                         recurse(child, key)
                 else:
                     data[key] = _coerce(child.text or "")
+
         recurse(root)
         return data
 
