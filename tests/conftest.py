@@ -10,3 +10,10 @@ pytest_plugins = "pytest_homeassistant_custom_component"
 def auto_enable_custom_integrations(enable_custom_integrations):
     """Enable custom integrations for all tests."""
     yield
+
+
+@pytest.fixture
+async def mock_aiohttp_session(hass):
+    """Get the aiohttp session from hass to avoid thread cleanup issues."""
+    from homeassistant.helpers.aiohttp_client import async_get_clientsession
+    return async_get_clientsession(hass)
