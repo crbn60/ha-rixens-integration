@@ -19,6 +19,7 @@ _LOGGER = logging.getLogger(__name__)
 class RixensDataCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     def __init__(self, hass: HomeAssistant, host: str, update_interval: timedelta, config_entry: ConfigEntry) -> None:
         self.host = host
+        self.config_entry = config_entry
         self.session = async_get_clientsession(hass)
         self.api = RixensApiClient(host=self.host, session=self.session)
         super().__init__(

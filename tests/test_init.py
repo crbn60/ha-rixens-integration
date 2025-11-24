@@ -20,8 +20,8 @@ MOCK_STATUS_XML = """<?xml version="1.0" encoding="UTF-8"?>
 
 
 @pytest.mark.asyncio
-async def test_async_setup_coordinator_with_mocked_api(hass):
-    """Test coordinator setup with mocked API responses."""
+async def test_coordinator_refresh_with_mocked_response(hass):
+    """Test coordinator refresh with mocked API responses."""
     from custom_components.rixens.coordinator import RixensDataCoordinator
     from datetime import timedelta
     
