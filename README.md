@@ -50,11 +50,16 @@ Core goals:
 | switch.rixens_engineenable | switch | ✅ | engineenable |
 | switch.rixens_electricenable | switch | ✅ | electricenable |
 | switch.rixens_floorenable | switch | ✅ | floorenable |
+| switch.rixens_glycol | switch | ✅ | glycol |
+| switch.rixens_fanenabled | switch | ✅ | fanenabled |
+| switch.rixens_thermenabled | switch | ✅ | thermenabled |
 | sensor.rixens_heater_state_code | sensor | ❌ | heaterstate |
 | sensor.rixens_fault_AF | sensor | ❌ | fault_* |
 
-## Control Mapping (Provisional)
-See [docs/act_map.md](docs/act_map.md) for ACT IDs.
+## Control Mapping
+All controllable parameters are implemented and tested. See:
+- [docs/act_map.md](docs/act_map.md) - Quick reference for ACT IDs
+- [docs/control_mapping.md](docs/control_mapping.md) - Complete API documentation
 
 ## Disclaimer
 Heating equipment control can be sensitive. Use sane intervals and validate commands manually before automating.
