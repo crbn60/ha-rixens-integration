@@ -1,7 +1,5 @@
 """Tests for the Rixens integration initialization."""
 
-from unittest.mock import AsyncMock, patch
-
 import pytest
 from aioresponses import aioresponses
 from pytest_homeassistant_custom_component.common import MockConfigEntry
