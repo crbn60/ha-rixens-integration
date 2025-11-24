@@ -3,7 +3,7 @@
 import pytest
 from homeassistant import config_entries
 from homeassistant.core import HomeAssistant
-from homeassistant.data_entry_flow import FlowResultType
+from homeassistant.data_entry_flow import FlowResultType, InvalidData
 
 from custom_components.rixens.const import (
     CONF_HOST,
@@ -193,8 +193,6 @@ async def test_options_flow_interval_too_low(
 
     # The schema validation will catch this and raise InvalidData
     # This is the expected behavior with NumberSelector
-    from homeassistant.data_entry_flow import InvalidData
-
     with pytest.raises(InvalidData):
         await hass.config_entries.options.async_configure(
             result["flow_id"], user_input={CONF_POLL_INTERVAL: MIN_POLL_INTERVAL - 1}
@@ -216,8 +214,6 @@ async def test_options_flow_interval_too_high(
 
     # The schema validation will catch this and raise InvalidData
     # This is the expected behavior with NumberSelector
-    from homeassistant.data_entry_flow import InvalidData
-
     with pytest.raises(InvalidData):
         await hass.config_entries.options.async_configure(
             result["flow_id"], user_input={CONF_POLL_INTERVAL: MAX_POLL_INTERVAL + 1}
