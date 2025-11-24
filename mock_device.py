@@ -2,12 +2,20 @@ import http.server
 import socketserver
 import urllib.parse
 from datetime import datetime
+import sys
+import os
+
+# Add custom_components to path to import CMD_MAP
+sys.path.insert(
+    0, os.path.join(os.path.dirname(__file__), "custom_components", "rixens")
+)
+from const import CMD_MAP
 
 # CONFIGURATION
 PORT = 8000
 # Map the 'act' ID from the URL to the internal state key
-# MUST MATCH your const.py CMD_MAP IDs
-ACT_MAP = {1: "setpoint", 2: "fanspeed", 3: "floorenable", 4: "systemheat"}
+# Imported from const.py to ensure consistency
+ACT_MAP = {v: k for k, v in CMD_MAP.items()}  # Reverse mapping: action_id -> key
 
 # INITIAL STATE (Based on your uploaded XML)
 # We store 'value' and the 'xml_path' to inject it into
