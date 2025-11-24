@@ -15,9 +15,8 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .const import DOMAIN, ICON_MAP, RAW_TEMP_DIVISOR
 from .coordinator import RixensDataCoordinator
 
-dataclass
 
-
+@dataclass
 class SensorDescription:
     key: str
     name: str
