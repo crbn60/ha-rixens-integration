@@ -1,1 +1,38 @@
-{"config":{"step":{"user":{"title":"Rixens MCS7 Controller","description":"Enter the host/IP of your Rixens MCS7 controller.","data":{"host":"Host/IP Address"}}},"options":{"step":{"init":{"title":"Rixens Options","description":"Adjust polling interval (seconds).","data":{"poll_interval":"Polling Interval (2-3600s)"}}},"error":{"interval_out_of_range":"Polling interval must be between 2 and 3600 seconds."}}}}
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Rixens MCS7 Controller",
+        "description": "Enter the host/IP address of your Rixens MCS7 controller. Each controller will be added as a separate integration instance.",
+        "data": {
+          "host": "Host/IP Address"
+        }
+      }
+    },
+    "error": {
+      "invalid_host": "Host/IP address cannot be empty",
+      "already_configured": "This controller is already configured"
+    },
+    "abort": {
+      "already_configured": "This Rixens MCS7 controller is already configured",
+      "import_not_supported": "YAML configuration is not supported. Please use the UI to configure this integration."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Rixens MCS7 Options",
+        "description": "Configure polling interval for data updates. Changes will take effect after saving.",
+        "data": {
+          "poll_interval": "Polling Interval"
+        },
+        "data_description": {
+          "poll_interval": "How often to poll the controller for updates (2-3600 seconds)"
+        }
+      }
+    },
+    "error": {
+      "interval_out_of_range": "Polling interval must be between 2 and 3600 seconds"
+    }
+  }
+}
