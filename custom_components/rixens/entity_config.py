@@ -106,7 +106,7 @@ class EntityConfig:
 
 
 # Temperature scaling: Rixens uses raw values that need to be divided by 10
-# to get Fahrenheit values
+# to get Celsius values
 TEMP_SCALING = 10.0
 
 # Voltage scaling: Battery voltage is in 0.1V units
@@ -125,7 +125,7 @@ ENTITY_CONFIGS: dict[str, EntityConfig] = {
         entity_type=EntityType.SENSOR,
         icon="mdi:thermometer",
         device_class=DeviceClass.TEMPERATURE,
-        unit=UnitOfTemperature.FAHRENHEIT,
+        unit=UnitOfTemperature.CELSIUS,
         scaling_factor=TEMP_SCALING,
     ),
     "enginetemp": EntityConfig(
@@ -134,7 +134,7 @@ ENTITY_CONFIGS: dict[str, EntityConfig] = {
         entity_type=EntityType.SENSOR,
         icon="mdi:engine",
         device_class=DeviceClass.TEMPERATURE,
-        unit=UnitOfTemperature.FAHRENHEIT,
+        unit=UnitOfTemperature.CELSIUS,
         scaling_factor=TEMP_SCALING,
     ),
     "floortemp": EntityConfig(
@@ -143,7 +143,7 @@ ENTITY_CONFIGS: dict[str, EntityConfig] = {
         entity_type=EntityType.SENSOR,
         icon="mdi:floor-plan",
         device_class=DeviceClass.TEMPERATURE,
-        unit=UnitOfTemperature.FAHRENHEIT,
+        unit=UnitOfTemperature.CELSIUS,
         scaling_factor=TEMP_SCALING,
     ),
     # ============================================================================
@@ -166,10 +166,10 @@ ENTITY_CONFIGS: dict[str, EntityConfig] = {
         entity_type=EntityType.NUMBER,
         icon="mdi:thermostat",
         device_class=DeviceClass.TEMPERATURE,
-        unit=UnitOfTemperature.FAHRENHEIT,
+        unit=UnitOfTemperature.CELSIUS,
         scaling_factor=TEMP_SCALING,
-        min_value=9.0,  # 90 raw / 10 = 9°F min
-        max_value=22.0,  # 220 raw / 10 = 22°F max
+        min_value=9.0,  # 90 raw / 10 = 9°C (48°F) min
+        max_value=22.0,  # 220 raw / 10 = 22°C (72°F) max
         step=0.1,
         act_id=101,
     ),

@@ -38,18 +38,18 @@ class EntityConfig:
 
 ### 1. Temperature Sensors (Read-Only)
 
-Temperature values from the controller are raw integers that must be divided by 10 to get Fahrenheit values.
+Temperature values from the controller are raw integers that must be divided by 10 to get Celsius values.
 
 | Key | Name | Raw Value | Scaled Value | Formula |
 |-----|------|-----------|--------------|---------|
-| currenttemp | Current Temperature | 720 | 72.0°F | raw / 10 |
-| enginetemp | Engine Temperature | 850 | 85.0°F | raw / 10 |
-| floortemp | Floor Temperature | 680 | 68.0°F | raw / 10 |
-| setpoint | Setpoint | 185 | 18.5°F | raw / 10 |
+| currenttemp | Current Temperature | 720 | 72.0°C | raw / 10 |
+| enginetemp | Engine Temperature | 850 | 85.0°C | raw / 10 |
+| floortemp | Floor Temperature | 680 | 68.0°C | raw / 10 |
+| setpoint | Setpoint | 185 | 18.5°C | raw / 10 |
 
 **Scaling Factor**: `10.0`  
 **Device Class**: `temperature`  
-**Unit**: `°F` (UnitOfTemperature.FAHRENHEIT)  
+**Unit**: `°C` (UnitOfTemperature.FAHRENHEIT)  
 **Icon**: `mdi:thermometer` (or context-specific)
 
 ### 2. Humidity Sensor (Read-Only)
@@ -67,11 +67,11 @@ Number entities allow setting numeric values with range constraints.
 
 | Key | Name | Range (Scaled) | Step | ACT ID | Unit |
 |-----|------|----------------|------|--------|------|
-| setpoint | Setpoint | 9.0 - 22.0°F | 0.1 | 101 | °F |
+| setpoint | Setpoint | 9.0 - 22.0°C | 0.1 | 101 | °C |
 | fanspeed | Fan Speed | 0 - 100% | 1 | 102 | % |
 
 **Notes**:
-- Setpoint values are scaled (raw range 90-220 → 9.0-22.0°F)
+- Setpoint values are scaled (raw range 90-220 → 9.0-22.0°C)
 - Fan speed is direct percentage (0-100)
 - Changes are sent via `interface.cgi?act=<ACT>&val=<value>`
 
@@ -232,7 +232,7 @@ Example:
 
 | Measurement | Raw Unit | Scaled Unit | Factor | Example |
 |-------------|----------|-------------|--------|---------|
-| Temperature | raw int | Fahrenheit | ÷ 10 | 720 → 72.0°F |
+| Temperature | raw int | Celsius | ÷ 10 | 720 → 72.0°C |
 | Voltage | 0.1V | Volts | ÷ 10 | 136 → 13.6V |
 | Percentage | % | % | ÷ 1 | 45 → 45% |
 | Boolean | 0/1 | on/off | — | 1 → on |

@@ -168,7 +168,7 @@ def test_setpoint_configuration():
     assert config.max_value == 22.0
     assert config.step == 0.1
     assert config.act_id == 101
-    assert config.unit == UnitOfTemperature.FAHRENHEIT
+    assert config.unit == UnitOfTemperature.CELSIUS
     assert config.device_class == DeviceClass.TEMPERATURE
 
 
@@ -279,7 +279,7 @@ def test_entity_units():
     for key in temp_entities:
         config = get_entity_config(key)
         assert config is not None
-        assert config.unit == UnitOfTemperature.FAHRENHEIT
+        assert config.unit == UnitOfTemperature.CELSIUS
 
     # Humidity
     config = get_entity_config("currenthumidity")

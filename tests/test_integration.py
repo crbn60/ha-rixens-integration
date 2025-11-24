@@ -135,7 +135,7 @@ def test_number_entity_value_reversal():
     """Test that scaled values can be converted back to raw for writes."""
     from custom_components.rixens.entity_config import get_entity_config
 
-    # Test setpoint: user sets 19.5°F, should send 195 to controller
+    # Test setpoint: user sets 19.5°C, should send 195 to controller
     setpoint_config = get_entity_config("setpoint")
     user_value = 19.5
     raw_value = int(user_value * setpoint_config.scaling_factor)
