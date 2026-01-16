@@ -19,6 +19,7 @@ from homeassistant.const import (
     UnitOfLength,
     UnitOfTemperature,
     UnitOfTime,
+    UnitOfVolume,
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
@@ -140,6 +141,14 @@ SENSOR_DESCRIPTIONS: tuple[RixensSensorEntityDescription, ...] = (
         state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
         value_fn=lambda data: data.heater.dosing_pump,
+    ),
+    RixensSensorEntityDescription(
+        key="fuel_consumption",
+        translation_key="fuel_consumption",
+        native_unit_of_measurement=f"{UnitOfVolume.MILLILITERS}/h",
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value_fn=lambda data: round(data.heater.dosing_pump * 72, 2) if data.heater.dosing_pump else 0,
     ),
     RixensSensorEntityDescription(
         key="heater_state",
