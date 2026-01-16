@@ -135,6 +135,8 @@ SENSOR_DESCRIPTIONS: tuple[RixensSensorEntityDescription, ...] = (
     RixensSensorEntityDescription(
         key="dosing_pump",
         translation_key="dosing_pump",
+        native_unit_of_measurement="Hz",
+        device_class=SensorDeviceClass.FREQUENCY,
         state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
         value_fn=lambda data: data.heater.dosing_pump,

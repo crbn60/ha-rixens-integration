@@ -27,7 +27,7 @@ class RixensHeaterData:
     inlet_temp: float
     outlet_temp: float
     altitude: float
-    dosing_pump: int
+    dosing_pump: float  # Frequency in Hz
     burner_motor: int
     heater_state: int
     glow_pin: int
@@ -167,7 +167,7 @@ class RixensApi:
             inlet_temp=get_int(heater1, "inlettemp") / 10.0 if heater1 is not None else 0.0,
             outlet_temp=get_int(heater1, "outlettemp") / 10.0 if heater1 is not None else 0.0,
             altitude=get_float(heater1, "altitude") if heater1 is not None else 0.0,
-            dosing_pump=get_int(heater1, "dosingpump") if heater1 is not None else 0,
+            dosing_pump=get_int(heater1, "dosingpump") / 10.0 if heater1 is not None else 0.0,
             burner_motor=get_int(heater1, "burnermotor") if heater1 is not None else 0,
             heater_state=get_int(heater1, "heaterstate") if heater1 is not None else 0,
             glow_pin=get_int(heater1, "glowpin") if heater1 is not None else 0,

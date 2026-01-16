@@ -1,0 +1,131 @@
+<response>
+<version>HW2-1.205 2025_11_20 RIXENS</version>
+<heatversion>1.06 2025-11-21 PID</heatversion>
+<lfs>0</lfs>
+<mode>1</mode>
+<uptime>146691</uptime>
+<dip>0</dip>
+<systemheat>1</systemheat>
+<heaterstate>20</heaterstate>
+<zone2state>0</zone2state>
+<zone3state>0</zone3state>
+<enginestate>0</enginestate>
+<glycolstate>2</glycolstate>
+<currenttemp>171</currenttemp>
+<currenthumidity>145</currenthumidity>
+<heater1>
+<heaton>1</heaton>
+<battv>125</battv>
+<timer>0</timer>
+<resettimer>0</resettimer>
+<runtime>114236</runtime>
+<rawsetpoint>0</rawsetpoint>
+<pidspeed>73</pidspeed>
+<piderr>9</piderr>
+<obalt>2</obalt>
+<flametemp>14525</flametemp>
+<inlettemp>7075</inlettemp>
+<outlettemp>7300</outlettemp>
+<altitude>997.200000</altitude>
+<internalaltitude>0</internalaltitude>
+<rawaltitude>0.000000</rawaltitude>
+<primecounter>0</primecounter>
+<glowpin>0</glowpin>
+<dosingpump>16</dosingpump>
+<burnermotor>3532</burnermotor>
+<faultcycle>-999</faultcycle>
+<heaterstate>20</heaterstate>
+<temperature>0</temperature>
+<can>0</can>
+<preheat>0</preheat>
+</heater1>
+<heater1-faults>
+  <fault>
+<name>AF</name>
+<value>0</value>
+</fault>
+  <fault>
+<name>F1</name>
+<value>0</value>
+  </fault>
+  <fault>
+<name>F2</name>
+<value>0</value>
+  </fault>
+  <fault>
+<name>F3</name>
+<value>0</value>
+  </fault>
+  <fault>
+<name>F4</name>
+<value>0</value>
+  </fault>
+  <fault>
+<name>F5</name>
+<value>0</value>
+  </fault>
+</heater1-faults>
+  <settings>
+    <altitudemode>0</altitudemode>
+    <security>WPA2</security>
+    <key>12341234</key>    <ssid>RIXENB67CFF</ssid>
+    <channel>1</channel>
+  <floorenable>1</floorenable>
+  <glycol>0</glycol>
+  <engineenable>0</engineenable>
+  <electricenable>1</electricenable>
+  <preheatenable>0</preheatenable>
+  <auxenable>0</auxenable>
+  <pwm>0</pwm>
+  <pumpspeed>0</pumpspeed>
+  <flooroffset>1</flooroffset>
+  <ehfmode>1</ehfmode>
+  <fanenabled>1</fanenabled>
+  <thermenabled>1</thermenabled>
+    <setpoint>180</setpoint>
+    <fanspeed>Auto</fanspeed>
+    <pumpstate>1</pumpstate>
+    <pumpstate>1</pumpstate>
+    <fanstate>1</fanstate>
+    <heatsources>12</heatsources>
+    <auxsrc>0</auxsrc>
+    <floorsrc>2</floorsrc>
+    <furnacesrc>2</furnacesrc>
+    <electricsrc>0</electricsrc>
+    <enginesrc>0</enginesrc>
+    <cnstheat>0</cnstheat>
+    <cnstheattimer>1</cnstheattimer>
+    <cnstheattimerval>-1</cnstheattimerval>
+    <preheatsrc>0</preheatsrc>
+    <presetsetpoint>211</presetsetpoint>
+    <presetfanspeed>20</presetfanspeed>
+    <presetfurnacesrc>1</presetfurnacesrc>
+    <presetelectricsrc>1</presetelectricsrc>
+    <presetenginesrc>1</presetenginesrc>
+    <presetcnstheat>0</presetcnstheat>
+  </settings>
+<autofan>
+  <fanset id="0" speed="999" />
+  <fanset id="1" speed="80" />
+  <fanset id="2" speed="50" />
+  <fanset id="3" speed="0" />
+  <fanset id="4" speed="1" />
+  <fanset id="5" speed="1" />
+  <fanset id="6" speed="10" />
+  <fanset id="7" speed="45" />
+  <fanset id="8" speed="50" />
+  <fanset id="9" speed="100" />
+</autofan>
+<GPSTracking>0</GPSTracking>
+<GPSTrackInterval>60</GPSTrackInterval>
+<wifi_scan_results>
+<scanning />
+</wifi_scan_results>
+<infrastructure>
+<infra_ssid>LevelUp Mobile</infra_ssid><infra_error>0</infra_error>
+<infra_error_code>
+0</infra_error_code>
+<infra_netup>1</infra_netup>
+<infra_dhcp>1</infra_dhcp>
+<infra_ip>10.0.22.6</infra_ip></infrastructure>
+</response>
