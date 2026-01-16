@@ -166,7 +166,7 @@ class RixensApi:
             flame_temp=get_int(heater1, "flametemp") / 10.0 if heater1 is not None else 0.0,
             inlet_temp=get_int(heater1, "inlettemp") / 100.0 if heater1 is not None else 0.0,
             outlet_temp=get_int(heater1, "outlettemp") / 100.0 if heater1 is not None else 0.0,
-            altitude=get_float(heater1, "altitude") if heater1 is not None else 0.0,
+            altitude=get_float(heater1, "altitude") * 0.3048 if heater1 is not None else 0.0,  # Convert feet to meters
             dosing_pump=get_int(heater1, "dosingpump") / 10.0 if heater1 is not None else 0.0,
             burner_motor=get_int(heater1, "burnermotor") if heater1 is not None else 0,
             heater_state=get_int(heater1, "heaterstate") if heater1 is not None else 0,

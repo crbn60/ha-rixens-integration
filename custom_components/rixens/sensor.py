@@ -93,7 +93,7 @@ SENSOR_DESCRIPTIONS: tuple[RixensSensorEntityDescription, ...] = (
     RixensSensorEntityDescription(
         key="altitude",
         translation_key="altitude",
-        native_unit_of_measurement=UnitOfLength.FEET,
+        native_unit_of_measurement=UnitOfLength.METERS,
         state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
         value_fn=lambda data: data.heater.altitude,
