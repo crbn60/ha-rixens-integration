@@ -68,7 +68,7 @@ class RixensData:
     engine_state: int
     glycol_state: int
     current_temp: float  # Temperature in Celsius
-    current_humidity: int
+    current_humidity: float  # Humidity in percent
     heater: RixensHeaterData
     settings: RixensSettings
 
@@ -216,7 +216,7 @@ class RixensApi:
             engine_state=get_int(root, "enginestate"),
             glycol_state=get_int(root, "glycolstate"),
             current_temp=get_int(root, "currenttemp") / 10.0,
-            current_humidity=get_int(root, "currenthumidity"),
+            current_humidity=get_int(root, "currenthumidity") / 10.0,
             heater=heater_data,
             settings=settings,
         )
