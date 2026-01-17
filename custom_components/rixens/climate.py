@@ -101,10 +101,18 @@ class RixensClimate(CoordinatorEntity[RixensCoordinator], ClimateEntity):
         if not self.coordinator.data.system_heat:
             return HVACAction.OFF
 
-        # Check if heater is actively heating by looking at heat_on flag
-        # and heater_state (should be non-zero when running)
-        if self.coordinator.data.heater.heat_on and self.coordinator.data.heater.heater_state != HEATER_STATE_OFF:
+        # Check if any heat source is actively heating
+        data = self.coordinator.data
+
+        # Furnace has explicit heat_on flag
+        if data.heater.heat_on and data.heater.heater_state != HEATER_STATE_OFF:
             return HVACAction.HEATING
+
+        # Electric and floor heat are active when enabled and calling for heat
+        # (current temp below setpoint)
+        if data.current_temp < data.settings.setpoint:
+            if data.settings.electric_enable or data.settings.floor_enable:
+                return HVACAction.HEATING
 
         return HVACAction.IDLE
 
