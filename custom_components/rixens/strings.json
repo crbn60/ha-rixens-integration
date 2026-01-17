@@ -1,0 +1,98 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Rixens",
+        "description": "Enter the connection details for your Rixens device.",
+        "data": {
+          "host": "Host",
+          "port": "Port"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to Rixens device",
+      "unknown": "Unexpected error"
+    },
+    "abort": {
+      "already_configured": "Device is already configured"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "current_temperature": {
+        "name": "Temperature"
+      },
+      "current_humidity": {
+        "name": "Humidity"
+      },
+      "battery_voltage": {
+        "name": "Battery voltage"
+      },
+      "flame_temperature": {
+        "name": "Flame temperature"
+      },
+      "inlet_temperature": {
+        "name": "Inlet temperature"
+      },
+      "outlet_temperature": {
+        "name": "Outlet temperature"
+      },
+      "altitude": {
+        "name": "Altitude"
+      },
+      "heater_runtime": {
+        "name": "Heater runtime"
+      },
+      "system_uptime": {
+        "name": "System uptime"
+      },
+      "pid_speed": {
+        "name": "PID speed"
+      },
+      "burner_motor": {
+        "name": "Burner motor"
+      },
+      "dosing_pump": {
+        "name": "Dosing pump"
+      },
+      "fuel_consumption": {
+        "name": "Fuel consumption"
+      },
+      "heater_state": {
+        "name": "Heater state"
+      },
+      "firmware_version": {
+        "name": "Firmware version"
+      },
+      "heat_firmware_version": {
+        "name": "Heat firmware version"
+      }
+    },
+    "switch": {
+      "system_heat": {
+        "name": "System heat"
+      },
+      "pump": {
+        "name": "Pump"
+      },
+      "fan": {
+        "name": "Fan"
+      },
+      "floor_heat": {
+        "name": "Floor heat"
+      },
+      "electric_heat": {
+        "name": "Electric heat"
+      },
+      "thermostat_mode": {
+        "name": "Thermostat mode"
+      }
+    },
+    "number": {
+      "fan_speed": {
+        "name": "Fan speed"
+      }
+    }
+  }
+}
