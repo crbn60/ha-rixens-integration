@@ -101,10 +101,12 @@ class RixensClimate(CoordinatorEntity[RixensCoordinator], ClimateEntity):
         if not self.coordinator.data.system_heat:
             return HVACAction.OFF
 
-        heater_state = self.coordinator.data.heater_state
-        if heater_state == HEATER_STATE_OFF:
-            return HVACAction.IDLE
-        return HVACAction.HEATING
+        # Check if heater is actively heating by looking at heat_on flag
+        # and heater_state (should be non-zero when running)
+        if self.coordinator.data.heater.heat_on and self.coordinator.data.heater.heater_state != HEATER_STATE_OFF:
+            return HVACAction.HEATING
+
+        return HVACAction.IDLE
 
     @property
     def fan_mode(self) -> str | None:
