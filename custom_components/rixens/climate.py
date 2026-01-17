@@ -22,7 +22,6 @@ from .const import (
     FAN_SPEED_AUTO,
     FAN_SPEED_MAX,
     FAN_SPEED_MIN,
-    HEATER_STATE_OFF,
     TEMP_MAX,
     TEMP_MIN,
 )
@@ -98,15 +97,12 @@ class RixensClimate(CoordinatorEntity[RixensCoordinator], ClimateEntity):
         if not self.coordinator.data:
             return None
 
-        if not self.coordinator.data.system_heat:
-            return HVACAction.OFF
-
-        # Check if heater is actively heating by looking at heat_on flag
-        # and heater_state (should be non-zero when running)
-        if self.coordinator.data.heater.heat_on and self.coordinator.data.heater.heater_state != HEATER_STATE_OFF:
+        # Use system_heat property from status.xml to determine heating state
+        # When system_heat is true, the system is actively heating
+        if self.coordinator.data.system_heat:
             return HVACAction.HEATING
 
-        return HVACAction.IDLE
+        return HVACAction.OFF
 
     @property
     def fan_mode(self) -> str | None:
