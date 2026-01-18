@@ -51,6 +51,13 @@ class RixensSettings:
     fan_enabled: bool
     therm_enabled: bool
     glycol: bool
+    # Heat source selection fields (0=off, 2=on)
+    heatsources: int  # Bitmask of active heat sources
+    aux_src: int  # Auxiliary heat source
+    floor_src: int  # Floor heat source
+    furnace_src: int  # Furnace heat source
+    electric_src: int  # Electric heat source
+    engine_src: int  # Engine heat source
 
 
 @dataclass
@@ -202,6 +209,13 @@ class RixensApi:
             fan_enabled=get_bool(settings_elem, "fanenabled") if settings_elem is not None else False,
             therm_enabled=get_bool(settings_elem, "thermenabled") if settings_elem is not None else False,
             glycol=get_bool(settings_elem, "glycol") if settings_elem is not None else False,
+            # Parse heat source selection fields
+            heatsources=get_int(settings_elem, "heatsources") if settings_elem is not None else 0,
+            aux_src=get_int(settings_elem, "auxsrc") if settings_elem is not None else 0,
+            floor_src=get_int(settings_elem, "floorsrc") if settings_elem is not None else 0,
+            furnace_src=get_int(settings_elem, "furnacesrc") if settings_elem is not None else 0,
+            electric_src=get_int(settings_elem, "electricsrc") if settings_elem is not None else 0,
+            engine_src=get_int(settings_elem, "enginesrc") if settings_elem is not None else 0,
         )
 
         return RixensData(
@@ -232,33 +246,21 @@ class RixensApi:
         """Set the fan speed (10-100, or 999 for auto)."""
         await self._request(f"/interface.cgi?act=2&val={speed}")
 
-    async def set_pump(self, on: bool) -> None:
-        """Turn the pump on or off."""
-        await self._request(f"/interface.cgi?act=4&val={1 if on else 0}")
-
-    async def set_fan(self, on: bool) -> None:
-        """Turn the fan on or off."""
+    async def set_furnace(self, on: bool) -> None:
+        """Turn the furnace on or off."""
         await self._request(f"/interface.cgi?act=5&val={1 if on else 0}")
 
     async def set_floor_heat(self, on: bool) -> None:
         """Turn floor heat on or off."""
-        await self._request(f"/interface.cgi?act=6&val={1 if on else 0}")
+        await self._request(f"/interface.cgi?act=10&val={1 if on else 0}")
 
-    async def set_thermostat(self, on: bool) -> None:
-        """Turn thermostat mode on or off."""
+    async def set_fan(self, on: bool) -> None:
+        """Turn the fan on or off."""
         await self._request(f"/interface.cgi?act=8&val={1 if on else 0}")
 
     async def set_electric_heat(self, on: bool) -> None:
         """Turn electric heat on or off."""
-        await self._request(f"/interface.cgi?act=10&val={1 if on else 0}")
-
-    async def set_system_heat(self, on: bool) -> None:
-        """Turn the main heating system on or off."""
-        await self._request(f"/buttons.cgi?act=20&val={1 if on else 0}")
-
-    async def press_zone_button(self, zone_id: int, mode: int = 0) -> None:
-        """Press a zone button."""
-        await self._request(f"/buttons.cgi?act=11&id={zone_id}&mode={mode}")
+        await self._request(f"/interface.cgi?act=4&val={1 if on else 0}")
 
     async def close(self) -> None:
         """Close the session."""

@@ -29,18 +29,25 @@ class RixensSwitchEntityDescription(SwitchEntityDescription):
 
 SWITCH_DESCRIPTIONS: tuple[RixensSwitchEntityDescription, ...] = (
     RixensSwitchEntityDescription(
-        key="system_heat",
-        translation_key="system_heat",
-        value_fn=lambda data: data.system_heat,
-        turn_on_fn=lambda api: api.set_system_heat(True),
-        turn_off_fn=lambda api: api.set_system_heat(False),
+        key="furnace",
+        translation_key="furnace",
+        value_fn=lambda data: data.settings.furnace_src == 2,  # 2 = active
+        turn_on_fn=lambda api: api.set_furnace(True),
+        turn_off_fn=lambda api: api.set_furnace(False),
     ),
     RixensSwitchEntityDescription(
-        key="pump",
-        translation_key="pump",
-        value_fn=lambda data: data.settings.pump_state,
-        turn_on_fn=lambda api: api.set_pump(True),
-        turn_off_fn=lambda api: api.set_pump(False),
+        key="floor_heat",
+        translation_key="floor_heat",
+        value_fn=lambda data: data.settings.floor_src == 2,  # 2 = active
+        turn_on_fn=lambda api: api.set_floor_heat(True),
+        turn_off_fn=lambda api: api.set_floor_heat(False),
+    ),
+    RixensSwitchEntityDescription(
+        key="electric_heat",
+        translation_key="electric_heat",
+        value_fn=lambda data: data.settings.electric_src == 2,  # 2 = active
+        turn_on_fn=lambda api: api.set_electric_heat(True),
+        turn_off_fn=lambda api: api.set_electric_heat(False),
     ),
     RixensSwitchEntityDescription(
         key="fan",
@@ -48,27 +55,6 @@ SWITCH_DESCRIPTIONS: tuple[RixensSwitchEntityDescription, ...] = (
         value_fn=lambda data: data.settings.fan_state,
         turn_on_fn=lambda api: api.set_fan(True),
         turn_off_fn=lambda api: api.set_fan(False),
-    ),
-    RixensSwitchEntityDescription(
-        key="floor_heat",
-        translation_key="floor_heat",
-        value_fn=lambda data: data.settings.floor_enable,
-        turn_on_fn=lambda api: api.set_floor_heat(True),
-        turn_off_fn=lambda api: api.set_floor_heat(False),
-    ),
-    RixensSwitchEntityDescription(
-        key="electric_heat",
-        translation_key="electric_heat",
-        value_fn=lambda data: data.settings.electric_enable,
-        turn_on_fn=lambda api: api.set_electric_heat(True),
-        turn_off_fn=lambda api: api.set_electric_heat(False),
-    ),
-    RixensSwitchEntityDescription(
-        key="thermostat_mode",
-        translation_key="thermostat_mode",
-        value_fn=lambda data: data.settings.therm_enabled,
-        turn_on_fn=lambda api: api.set_thermostat(True),
-        turn_off_fn=lambda api: api.set_thermostat(False),
     ),
 )
 

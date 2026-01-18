@@ -46,7 +46,6 @@ class RixensClimate(CoordinatorEntity[RixensCoordinator], ClimateEntity):
     _attr_has_entity_name = True
     _attr_name = None
     _attr_temperature_unit = UnitOfTemperature.CELSIUS
-    _attr_hvac_modes = [HVACMode.OFF, HVACMode.HEAT]
     _attr_fan_modes = FAN_MODES
     _attr_min_temp = TEMP_MIN
     _attr_max_temp = TEMP_MAX
@@ -85,21 +84,18 @@ class RixensClimate(CoordinatorEntity[RixensCoordinator], ClimateEntity):
         return None
 
     @property
-    def hvac_mode(self) -> HVACMode:
-        """Return the current HVAC mode."""
-        if self.coordinator.data and self.coordinator.data.system_heat:
-            return HVACMode.HEAT
-        return HVACMode.OFF
-
-    @property
     def hvac_action(self) -> HVACAction | None:
         """Return the current HVAC action."""
         if not self.coordinator.data:
             return None
 
-        # Use system_heat property from status.xml to determine heating state
-        # When system_heat is true, the system is actively heating
-        if self.coordinator.data.system_heat:
+        # System is heating if furnace is running or electric heat is on
+        # heater.heat_on indicates furnace is actively running
+        # electric_src == 2 indicates electric heat is enabled
+        if (
+            self.coordinator.data.heater.heat_on
+            or self.coordinator.data.settings.electric_src == 2
+        ):
             return HVACAction.HEATING
 
         return HVACAction.OFF
@@ -121,14 +117,6 @@ class RixensClimate(CoordinatorEntity[RixensCoordinator], ClimateEntity):
             await self.coordinator.api.set_temperature(float(temperature))
             await self.coordinator.async_request_refresh()
 
-    async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
-        """Set new HVAC mode."""
-        if hvac_mode == HVACMode.HEAT:
-            await self.coordinator.api.set_system_heat(True)
-        elif hvac_mode == HVACMode.OFF:
-            await self.coordinator.api.set_system_heat(False)
-        await self.coordinator.async_request_refresh()
-
     async def async_set_fan_mode(self, fan_mode: str) -> None:
         """Set new fan mode."""
         if fan_mode == "auto":
@@ -140,9 +128,13 @@ class RixensClimate(CoordinatorEntity[RixensCoordinator], ClimateEntity):
         await self.coordinator.async_request_refresh()
 
     async def async_turn_on(self) -> None:
-        """Turn the entity on."""
-        await self.async_set_hvac_mode(HVACMode.HEAT)
+        """Turn the heating system on by enabling furnace and electric heat."""
+        await self.coordinator.api.set_furnace(True)
+        await self.coordinator.api.set_electric_heat(True)
+        await self.coordinator.async_request_refresh()
 
     async def async_turn_off(self) -> None:
-        """Turn the entity off."""
-        await self.async_set_hvac_mode(HVACMode.OFF)
+        """Turn the heating system off by disabling furnace and electric heat."""
+        await self.coordinator.api.set_furnace(False)
+        await self.coordinator.api.set_electric_heat(False)
+        await self.coordinator.async_request_refresh()

@@ -17,7 +17,7 @@ custom_components/rixens/
 ├── const.py         # Domain and configuration constants
 ├── climate.py       # Climate entity (thermostat control)
 ├── sensor.py        # Sensor entities (temp, humidity, diagnostics)
-├── switch.py        # Switch entities (pump, fan, heat zones)
+├── switch.py        # Switch entities (furnace, fan, heat zones)
 ├── number.py        # Number entity (fan speed slider)
 ├── manifest.json    # Integration metadata
 ├── strings.json     # Translatable strings (source)
@@ -35,13 +35,10 @@ The Rixens device exposes an HTTP API:
 **Control endpoints:** All use GET requests
 - `/interface.cgi?act=1&val=XXX` - Set temperature setpoint (in tenths of °C)
 - `/interface.cgi?act=2&val=XXX` - Set fan speed (10-100, or 999 for auto)
-- `/interface.cgi?act=4&val=0|1` - Pump on/off
-- `/interface.cgi?act=5&val=0|1` - Fan on/off
-- `/interface.cgi?act=6&val=0|1` - Floor heat on/off
-- `/interface.cgi?act=8&val=0|1` - Thermostat mode on/off
-- `/interface.cgi?act=10&val=0|1` - Electric heat on/off
-- `/buttons.cgi?act=20&val=0|1` - System heat on/off
-- `/buttons.cgi?act=11&id=X&mode=0` - Zone button press
+- `/interface.cgi?act=4&val=0|1` - Electric heat on/off
+- `/interface.cgi?act=5&val=0|1` - Furnace on/off
+- `/interface.cgi?act=8&val=0|1` - Fan on/off
+- `/interface.cgi?act=10&val=0|1` - Floor heat on/off
 
 ## Key Patterns
 
@@ -56,7 +53,7 @@ The Rixens device exposes an HTTP API:
 |----------|----------|
 | climate  | Main thermostat (setpoint, current temp, fan modes, HVAC modes) |
 | sensor   | Temperature, humidity, battery voltage, flame/inlet/outlet temps, altitude, runtime, diagnostics |
-| switch   | System heat, pump, fan, floor heat, electric heat, thermostat mode |
+| switch   | Furnace, fan, floor heat, electric heat |
 | number   | Fan speed (10-100%) |
 
 ## Development

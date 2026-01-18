@@ -70,11 +70,8 @@
       }
     },
     "switch": {
-      "system_heat": {
-        "name": "System heat"
-      },
-      "pump": {
-        "name": "Pump"
+      "furnace": {
+        "name": "Furnace"
       },
       "fan": {
         "name": "Fan"
@@ -84,9 +81,6 @@
       },
       "electric_heat": {
         "name": "Electric heat"
-      },
-      "thermostat_mode": {
-        "name": "Thermostat mode"
       }
     },
     "number": {
