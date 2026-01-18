@@ -106,4 +106,6 @@ class RixensFanSpeed(CoordinatorEntity[RixensCoordinator], NumberEntity):
         with the specified speed.
         """
         await self.coordinator.api.set_fan_speed(int(value))
+        # Trigger burst mode for responsive update
+        self.coordinator.trigger_burst_mode()
         await self.coordinator.async_request_refresh()

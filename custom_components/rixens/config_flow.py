@@ -14,7 +14,25 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .api import RixensApi, RixensConnectionError
-from .const import CONF_PORT, DEFAULT_PORT, DOMAIN
+from .const import (
+    CONF_ADAPTIVE_ACTIVE,
+    CONF_ADAPTIVE_IDLE,
+    CONF_ADAPTIVE_OFF,
+    CONF_BURST_MODE,
+    CONF_PORT,
+    CONF_POLLING_MODE,
+    CONF_SCAN_INTERVAL,
+    DEFAULT_ADAPTIVE_ACTIVE,
+    DEFAULT_ADAPTIVE_IDLE,
+    DEFAULT_ADAPTIVE_OFF,
+    DEFAULT_PORT,
+    DEFAULT_SCAN_INTERVAL,
+    DOMAIN,
+    POLLING_MODE_ADAPTIVE,
+    POLLING_MODE_FIXED,
+    SCAN_INTERVAL_MAX,
+    SCAN_INTERVAL_MIN,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -89,31 +107,71 @@ class RixensOptionsFlowHandler(OptionsFlow):
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
-        """Manage preset temperature options."""
+        """Manage preset temperature and polling options."""
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
 
         # Get current values from options or use defaults
         current_options = self.config_entry.options
+        polling_mode = current_options.get(CONF_POLLING_MODE, POLLING_MODE_FIXED)
+
+        # Build base schema with preset temps
+        schema_dict = {
+            vol.Optional(
+                "preset_away_temp",
+                default=current_options.get("preset_away_temp", 10.0),
+            ): vol.All(vol.Coerce(float), vol.Range(min=5.0, max=30.0)),
+            vol.Optional(
+                "preset_home_temp",
+                default=current_options.get("preset_home_temp", 20.0),
+            ): vol.All(vol.Coerce(float), vol.Range(min=5.0, max=30.0)),
+            vol.Optional(
+                "preset_sleep_temp",
+                default=current_options.get("preset_sleep_temp", 18.0),
+            ): vol.All(vol.Coerce(float), vol.Range(min=5.0, max=30.0)),
+            vol.Required(
+                CONF_POLLING_MODE,
+                default=polling_mode,
+            ): vol.In([POLLING_MODE_FIXED, POLLING_MODE_ADAPTIVE]),
+        }
+
+        # Add polling-mode specific options
+        if polling_mode == POLLING_MODE_FIXED:
+            schema_dict[
+                vol.Required(
+                    CONF_SCAN_INTERVAL,
+                    default=current_options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
+                )
+            ] = vol.All(vol.Coerce(int), vol.Range(min=SCAN_INTERVAL_MIN, max=SCAN_INTERVAL_MAX))
+        else:  # POLLING_MODE_ADAPTIVE
+            schema_dict.update(
+                {
+                    vol.Required(
+                        CONF_ADAPTIVE_ACTIVE,
+                        default=current_options.get(CONF_ADAPTIVE_ACTIVE, DEFAULT_ADAPTIVE_ACTIVE),
+                    ): vol.All(vol.Coerce(int), vol.Range(min=SCAN_INTERVAL_MIN, max=SCAN_INTERVAL_MAX)),
+                    vol.Required(
+                        CONF_ADAPTIVE_IDLE,
+                        default=current_options.get(CONF_ADAPTIVE_IDLE, DEFAULT_ADAPTIVE_IDLE),
+                    ): vol.All(vol.Coerce(int), vol.Range(min=SCAN_INTERVAL_MIN, max=SCAN_INTERVAL_MAX)),
+                    vol.Required(
+                        CONF_ADAPTIVE_OFF,
+                        default=current_options.get(CONF_ADAPTIVE_OFF, DEFAULT_ADAPTIVE_OFF),
+                    ): vol.All(vol.Coerce(int), vol.Range(min=SCAN_INTERVAL_MIN, max=SCAN_INTERVAL_MAX)),
+                }
+            )
+
+        # Add burst mode option
+        schema_dict[
+            vol.Optional(
+                CONF_BURST_MODE,
+                default=current_options.get(CONF_BURST_MODE, True),
+            )
+        ] = bool
 
         return self.async_show_form(
             step_id="init",
-            data_schema=vol.Schema(
-                {
-                    vol.Optional(
-                        "preset_away_temp",
-                        default=current_options.get("preset_away_temp", 10.0),
-                    ): vol.All(vol.Coerce(float), vol.Range(min=5.0, max=30.0)),
-                    vol.Optional(
-                        "preset_home_temp",
-                        default=current_options.get("preset_home_temp", 20.0),
-                    ): vol.All(vol.Coerce(float), vol.Range(min=5.0, max=30.0)),
-                    vol.Optional(
-                        "preset_sleep_temp",
-                        default=current_options.get("preset_sleep_temp", 18.0),
-                    ): vol.All(vol.Coerce(float), vol.Range(min=5.0, max=30.0)),
-                }
-            ),
+            data_schema=vol.Schema(schema_dict),
         )
 
 

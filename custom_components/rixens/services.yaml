@@ -1,0 +1,11 @@
+force_refresh:
+  name: Force refresh
+  description: Immediately poll the device for updated data, regardless of the configured polling interval.
+  fields:
+    entry_id:
+      name: Entry ID
+      description: Config entry ID to refresh. If not specified, all Rixens devices will be refreshed.
+      required: false
+      example: "01234567890abcdef0123456789abcde"
+      selector:
+        text:

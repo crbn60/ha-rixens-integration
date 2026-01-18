@@ -21,12 +21,26 @@
   "options": {
     "step": {
       "init": {
-        "title": "Preset Temperatures",
-        "description": "Configure temperature presets for Away, Home, and Sleep modes.",
+        "title": "Integration Settings",
+        "description": "Configure preset temperatures and polling behavior.",
         "data": {
           "preset_away_temp": "Away temperature (°C)",
           "preset_home_temp": "Home temperature (°C)",
-          "preset_sleep_temp": "Sleep temperature (°C)"
+          "preset_sleep_temp": "Sleep temperature (°C)",
+          "polling_mode": "Polling mode",
+          "scan_interval": "Polling interval (seconds)",
+          "adaptive_active_interval": "Active heating interval (seconds)",
+          "adaptive_idle_interval": "Idle interval (seconds)",
+          "adaptive_off_interval": "System off interval (seconds)",
+          "burst_mode": "Enable burst mode for responsive UI"
+        },
+        "data_description": {
+          "polling_mode": "Fixed: Use constant interval. Adaptive: Adjust based on system state.",
+          "scan_interval": "How often to poll the device when using fixed mode (3-30 seconds)",
+          "adaptive_active_interval": "Poll interval when system is actively heating",
+          "adaptive_idle_interval": "Poll interval when system is idle but enabled",
+          "adaptive_off_interval": "Poll interval when system is off",
+          "burst_mode": "Temporarily use faster polling after user actions for responsive UI"
         }
       }
     }
@@ -80,6 +94,23 @@
       },
       "heat_firmware_version": {
         "name": "Heat firmware version"
+      },
+      "total_api_calls": {
+        "name": "Total API calls"
+      },
+      "failed_api_calls": {
+        "name": "Failed API calls"
+      },
+      "average_response_time": {
+        "name": "Average response time"
+      },
+      "current_poll_interval": {
+        "name": "Current poll interval"
+      }
+    },
+    "button": {
+      "refresh": {
+        "name": "Refresh"
       }
     },
     "switch": {
