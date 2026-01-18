@@ -13,6 +13,8 @@ import aiohttp
 _LOGGER = logging.getLogger(__name__)
 
 DEFAULT_TIMEOUT = 10
+MAX_RETRIES = 3
+RETRY_DELAY = 1  # seconds
 
 
 @dataclass
@@ -109,19 +111,70 @@ class RixensApi:
             self._session = aiohttp.ClientSession()
         return self._session
 
-    async def _request(self, path: str) -> str:
-        """Make a request to the device."""
+    async def _request(self, path: str, retry: bool = True) -> str:
+        """Make a request to the device with retry logic.
+
+        Args:
+            path: API path to request
+            retry: Whether to retry on failure (default: True)
+
+        Returns:
+            Response text from the device
+
+        Raises:
+            RixensConnectionError: If all retries fail
+        """
         session = await self._get_session()
         url = f"{self._base_url}{path}"
-        try:
-            async with asyncio.timeout(DEFAULT_TIMEOUT):
-                async with session.get(url) as response:
-                    response.raise_for_status()
-                    return await response.text()
-        except asyncio.TimeoutError as err:
-            raise RixensConnectionError(f"Timeout connecting to {url}") from err
-        except aiohttp.ClientError as err:
-            raise RixensConnectionError(f"Error connecting to {url}: {err}") from err
+        last_error = None
+
+        retries = MAX_RETRIES if retry else 1
+
+        for attempt in range(retries):
+            try:
+                async with asyncio.timeout(DEFAULT_TIMEOUT):
+                    async with session.get(url) as response:
+                        response.raise_for_status()
+                        if attempt > 0:
+                            _LOGGER.info(
+                                "Successfully connected to %s after %d retry attempt(s)",
+                                url,
+                                attempt,
+                            )
+                        return await response.text()
+            except asyncio.TimeoutError as err:
+                last_error = err
+                error_msg = f"Timeout connecting to {url}"
+                if attempt < retries - 1:
+                    _LOGGER.warning(
+                        "%s (attempt %d/%d), retrying in %ds...",
+                        error_msg,
+                        attempt + 1,
+                        retries,
+                        RETRY_DELAY * (attempt + 1),
+                    )
+                    await asyncio.sleep(RETRY_DELAY * (attempt + 1))  # Exponential backoff
+                else:
+                    _LOGGER.error("%s after %d attempts", error_msg, retries)
+            except aiohttp.ClientError as err:
+                last_error = err
+                error_msg = f"Error connecting to {url}: {err}"
+                if attempt < retries - 1:
+                    _LOGGER.warning(
+                        "%s (attempt %d/%d), retrying in %ds...",
+                        error_msg,
+                        attempt + 1,
+                        retries,
+                        RETRY_DELAY * (attempt + 1),
+                    )
+                    await asyncio.sleep(RETRY_DELAY * (attempt + 1))  # Exponential backoff
+                else:
+                    _LOGGER.error("%s after %d attempts", error_msg, retries)
+
+        # All retries failed
+        if isinstance(last_error, asyncio.TimeoutError):
+            raise RixensConnectionError(f"Timeout connecting to {url} after {retries} attempts") from last_error
+        raise RixensConnectionError(f"Error connecting to {url} after {retries} attempts: {last_error}") from last_error
 
     async def test_connection(self) -> bool:
         """Test the connection to the device."""
