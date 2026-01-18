@@ -38,8 +38,8 @@
       "outlet_temperature": {
         "name": "Outlet temperature"
       },
-      "altitude": {
-        "name": "Altitude"
+      "atmospheric_pressure": {
+        "name": "Atmospheric pressure"
       },
       "heater_runtime": {
         "name": "Heater runtime"
