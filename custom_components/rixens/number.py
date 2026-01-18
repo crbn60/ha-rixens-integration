@@ -8,7 +8,6 @@ from homeassistant.components.number import NumberEntity, NumberMode
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import PERCENTAGE
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
@@ -103,15 +102,8 @@ class RixensFanSpeed(CoordinatorEntity[RixensCoordinator], NumberEntity):
     async def async_set_native_value(self, value: float) -> None:
         """Set the fan speed.
 
-        Raises:
-            HomeAssistantError: If fan is in auto mode (read-only).
+        If currently in auto mode, this will switch to manual mode
+        with the specified speed.
         """
-        # Prevent changes when in auto mode
-        if self._is_auto_mode():
-            raise HomeAssistantError(
-                "Cannot set fan speed while in auto mode. "
-                "Switch to manual mode using the climate entity first."
-            )
-
         await self.coordinator.api.set_fan_speed(int(value))
         await self.coordinator.async_request_refresh()
