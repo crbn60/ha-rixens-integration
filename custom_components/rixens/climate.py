@@ -32,8 +32,8 @@ from .coordinator import RixensCoordinator
 
 FAN_MODES = ["auto", "10", "20", "30", "40", "50", "60", "70", "80", "90", "100"]
 
-# Preset temperature modes for common RV heating scenarios
-PRESET_TEMPS = {
+# Default preset temperatures (can be customized via integration options)
+DEFAULT_PRESET_TEMPS = {
     PRESET_AWAY: 10.0,  # Freeze protection
     PRESET_HOME: 20.0,  # Comfortable living
     PRESET_SLEEP: 18.0,  # Night time
@@ -85,6 +85,17 @@ class RixensClimate(CoordinatorEntity[RixensCoordinator], ClimateEntity):
         self._last_heat_sources: dict[str, bool] | None = None
         # Track current preset mode
         self._preset_mode: str | None = None
+        # Load preset temperatures from options or use defaults
+        self._load_preset_temps()
+
+    def _load_preset_temps(self) -> None:
+        """Load preset temperatures from config entry options."""
+        options = self.coordinator.config_entry.options
+        self._preset_temps = {
+            PRESET_AWAY: options.get("preset_away_temp", DEFAULT_PRESET_TEMPS[PRESET_AWAY]),
+            PRESET_HOME: options.get("preset_home_temp", DEFAULT_PRESET_TEMPS[PRESET_HOME]),
+            PRESET_SLEEP: options.get("preset_sleep_temp", DEFAULT_PRESET_TEMPS[PRESET_SLEEP]),
+        }
 
     @property
     def current_temperature(self) -> float | None:
@@ -231,10 +242,10 @@ class RixensClimate(CoordinatorEntity[RixensCoordinator], ClimateEntity):
     async def async_set_preset_mode(self, preset_mode: str) -> None:
         """Set new preset mode.
 
-        Sets temperature to predefined values for common RV heating scenarios.
+        Sets temperature to user-configured values for common RV heating scenarios.
         """
-        if preset_mode in PRESET_TEMPS:
-            await self.coordinator.api.set_temperature(PRESET_TEMPS[preset_mode])
+        if preset_mode in self._preset_temps:
+            await self.coordinator.api.set_temperature(self._preset_temps[preset_mode])
             self._preset_mode = preset_mode
             await self.coordinator.async_request_refresh()
 

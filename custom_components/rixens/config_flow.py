@@ -7,7 +7,7 @@ from typing import Any
 
 import voluptuous as vol
 
-from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
+from homeassistant.config_entries import ConfigFlow, ConfigFlowResult, OptionsFlow
 from homeassistant.const import CONF_HOST
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
@@ -51,6 +51,11 @@ class RixensConfigFlow(ConfigFlow, domain=DOMAIN):
 
     VERSION = 1
 
+    @staticmethod
+    def async_get_options_flow(config_entry):
+        """Get the options flow for this handler."""
+        return RixensOptionsFlowHandler(config_entry)
+
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
@@ -75,6 +80,40 @@ class RixensConfigFlow(ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=STEP_USER_DATA_SCHEMA,
             errors=errors,
+        )
+
+
+class RixensOptionsFlowHandler(OptionsFlow):
+    """Handle options flow for Rixens integration."""
+
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Manage preset temperature options."""
+        if user_input is not None:
+            return self.async_create_entry(title="", data=user_input)
+
+        # Get current values from options or use defaults
+        current_options = self.config_entry.options
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema(
+                {
+                    vol.Optional(
+                        "preset_away_temp",
+                        default=current_options.get("preset_away_temp", 10.0),
+                    ): vol.All(vol.Coerce(float), vol.Range(min=5.0, max=30.0)),
+                    vol.Optional(
+                        "preset_home_temp",
+                        default=current_options.get("preset_home_temp", 20.0),
+                    ): vol.All(vol.Coerce(float), vol.Range(min=5.0, max=30.0)),
+                    vol.Optional(
+                        "preset_sleep_temp",
+                        default=current_options.get("preset_sleep_temp", 18.0),
+                    ): vol.All(vol.Coerce(float), vol.Range(min=5.0, max=30.0)),
+                }
+            ),
         )
 
 
