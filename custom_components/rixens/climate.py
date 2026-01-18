@@ -46,6 +46,7 @@ class RixensClimate(CoordinatorEntity[RixensCoordinator], ClimateEntity):
     _attr_has_entity_name = True
     _attr_name = None
     _attr_temperature_unit = UnitOfTemperature.CELSIUS
+    _attr_hvac_modes = [HVACMode.OFF, HVACMode.HEAT]
     _attr_fan_modes = FAN_MODES
     _attr_min_temp = TEMP_MIN
     _attr_max_temp = TEMP_MAX
@@ -84,6 +85,26 @@ class RixensClimate(CoordinatorEntity[RixensCoordinator], ClimateEntity):
         return None
 
     @property
+    def hvac_mode(self) -> HVACMode:
+        """Return the current HVAC mode.
+
+        Mode is based on whether heat sources are enabled, not whether
+        heat is currently being called for (system_heat).
+        """
+        if not self.coordinator.data:
+            return HVACMode.OFF
+
+        # HVAC mode is HEAT if any heat source is enabled
+        # furnace_src == 2 or electric_src == 2 means that source is enabled
+        if (
+            self.coordinator.data.settings.furnace_src == 2
+            or self.coordinator.data.settings.electric_src == 2
+        ):
+            return HVACMode.HEAT
+
+        return HVACMode.OFF
+
+    @property
     def hvac_action(self) -> HVACAction | None:
         """Return the current HVAC action."""
         if not self.coordinator.data:
@@ -116,6 +137,19 @@ class RixensClimate(CoordinatorEntity[RixensCoordinator], ClimateEntity):
         if (temperature := kwargs.get(ATTR_TEMPERATURE)) is not None:
             await self.coordinator.api.set_temperature(float(temperature))
             await self.coordinator.async_request_refresh()
+
+    async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
+        """Set new HVAC mode.
+
+        Controls furnace and electric heat sources to enable/disable heating.
+        """
+        if hvac_mode == HVACMode.HEAT:
+            await self.coordinator.api.set_furnace(True)
+            await self.coordinator.api.set_electric_heat(True)
+        elif hvac_mode == HVACMode.OFF:
+            await self.coordinator.api.set_furnace(False)
+            await self.coordinator.api.set_electric_heat(False)
+        await self.coordinator.async_request_refresh()
 
     async def async_set_fan_mode(self, fan_mode: str) -> None:
         """Set new fan mode."""
