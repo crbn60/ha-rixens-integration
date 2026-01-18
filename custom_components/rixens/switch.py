@@ -100,9 +100,13 @@ class RixensSwitch(CoordinatorEntity[RixensCoordinator], SwitchEntity):
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the switch on."""
         await self.entity_description.turn_on_fn(self.coordinator.api)
+        # Trigger burst mode for responsive update
+        self.coordinator.trigger_burst_mode()
         await self.coordinator.async_request_refresh()
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the switch off."""
         await self.entity_description.turn_off_fn(self.coordinator.api)
+        # Trigger burst mode for responsive update
+        self.coordinator.trigger_burst_mode()
         await self.coordinator.async_request_refresh()

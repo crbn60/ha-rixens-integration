@@ -198,6 +198,8 @@ class RixensClimate(CoordinatorEntity[RixensCoordinator], ClimateEntity):
             await self.coordinator.api.set_temperature(float(temperature))
             # Clear preset mode when manually setting temperature
             self._preset_mode = None
+            # Trigger burst mode for responsive update
+            self.coordinator.trigger_burst_mode()
             await self.coordinator.async_request_refresh()
 
     async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
@@ -227,6 +229,8 @@ class RixensClimate(CoordinatorEntity[RixensCoordinator], ClimateEntity):
                 }
             await self.coordinator.api.set_furnace(False)
             await self.coordinator.api.set_electric_heat(False)
+        # Trigger burst mode for responsive update
+        self.coordinator.trigger_burst_mode()
         await self.coordinator.async_request_refresh()
 
     async def async_set_fan_mode(self, fan_mode: str) -> None:
@@ -237,6 +241,8 @@ class RixensClimate(CoordinatorEntity[RixensCoordinator], ClimateEntity):
             speed = int(fan_mode)
             if FAN_SPEED_MIN <= speed <= FAN_SPEED_MAX:
                 await self.coordinator.api.set_fan_speed(speed)
+        # Trigger burst mode for responsive update
+        self.coordinator.trigger_burst_mode()
         await self.coordinator.async_request_refresh()
 
     async def async_set_preset_mode(self, preset_mode: str) -> None:
@@ -247,6 +253,8 @@ class RixensClimate(CoordinatorEntity[RixensCoordinator], ClimateEntity):
         if preset_mode in self._preset_temps:
             await self.coordinator.api.set_temperature(self._preset_temps[preset_mode])
             self._preset_mode = preset_mode
+            # Trigger burst mode for responsive update
+            self.coordinator.trigger_burst_mode()
             await self.coordinator.async_request_refresh()
 
     async def async_turn_on(self) -> None:

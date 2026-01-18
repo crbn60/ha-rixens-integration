@@ -168,6 +168,38 @@ SENSOR_DESCRIPTIONS: tuple[RixensSensorEntityDescription, ...] = (
         entity_category=EntityCategory.DIAGNOSTIC,
         value_fn=lambda data: data.heat_version,
     ),
+    # Polling statistics sensors
+    RixensSensorEntityDescription(
+        key="total_api_calls",
+        translation_key="total_api_calls",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        value_fn=lambda data: None,  # Will be populated from coordinator stats
+    ),
+    RixensSensorEntityDescription(
+        key="failed_api_calls",
+        translation_key="failed_api_calls",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        value_fn=lambda data: None,  # Will be populated from coordinator stats
+    ),
+    RixensSensorEntityDescription(
+        key="average_response_time",
+        translation_key="average_response_time",
+        native_unit_of_measurement="s",
+        device_class=SensorDeviceClass.DURATION,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        state_class=SensorStateClass.MEASUREMENT,
+        value_fn=lambda data: None,  # Will be populated from coordinator stats
+    ),
+    RixensSensorEntityDescription(
+        key="current_poll_interval",
+        translation_key="current_poll_interval",
+        native_unit_of_measurement="s",
+        device_class=SensorDeviceClass.DURATION,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value_fn=lambda data: None,  # Will be populated from coordinator stats
+    ),
 )
 
 
@@ -205,6 +237,17 @@ class RixensSensor(CoordinatorEntity[RixensCoordinator], SensorEntity):
     @property
     def native_value(self) -> float | int | str | None:
         """Return the state of the sensor."""
+        # Handle polling statistics sensors
+        if self.entity_description.key == "total_api_calls":
+            return self.coordinator.polling_stats["total_polls"]
+        if self.entity_description.key == "failed_api_calls":
+            return self.coordinator.polling_stats["failed_polls"]
+        if self.entity_description.key == "average_response_time":
+            return self.coordinator.polling_stats["average_response_time"]
+        if self.entity_description.key == "current_poll_interval":
+            return self.coordinator.polling_stats["current_interval"]
+
+        # Handle regular sensors
         if self.coordinator.data:
             return self.entity_description.value_fn(self.coordinator.data)
         return None
