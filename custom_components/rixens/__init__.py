@@ -10,6 +10,7 @@ from .const import DOMAIN
 from .coordinator import RixensCoordinator
 
 PLATFORMS: list[Platform] = [
+    Platform.BINARY_SENSOR,
     Platform.CLIMATE,
     Platform.NUMBER,
     Platform.SENSOR,

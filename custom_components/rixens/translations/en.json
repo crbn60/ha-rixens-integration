@@ -32,6 +32,35 @@
     }
   },
   "entity": {
+    "binary_sensor": {
+      "flame_failure": {
+        "name": "Flame failure"
+      },
+      "ignition_failure": {
+        "name": "Ignition failure"
+      },
+      "overheat": {
+        "name": "Overheat"
+      },
+      "glow_plug_failure": {
+        "name": "Glow plug failure"
+      },
+      "voltage_low": {
+        "name": "Voltage low"
+      },
+      "voltage_high": {
+        "name": "Voltage high"
+      },
+      "sensor_failure": {
+        "name": "Sensor failure"
+      },
+      "pump_failure": {
+        "name": "Pump failure"
+      },
+      "motor_failure": {
+        "name": "Motor failure"
+      }
+    },
     "sensor": {
       "current_temperature": {
         "name": "Temperature"
