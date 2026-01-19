@@ -31,21 +31,21 @@ SWITCH_DESCRIPTIONS: tuple[RixensSwitchEntityDescription, ...] = (
     RixensSwitchEntityDescription(
         key="furnace",
         translation_key="furnace",
-        value_fn=lambda data: data.settings.furnace_src == 2,  # 2 = active
+        value_fn=lambda data: data.settings.furnace_src != 0,  # 0 = disabled, 1 = enabled, 2 = active
         turn_on_fn=lambda api: api.set_furnace(True),
         turn_off_fn=lambda api: api.set_furnace(False),
     ),
     RixensSwitchEntityDescription(
         key="floor_heat",
         translation_key="floor_heat",
-        value_fn=lambda data: data.settings.floor_src == 2,  # 2 = active
+        value_fn=lambda data: data.settings.floor_src != 0,  # 0 = disabled, 1 = enabled, 2 = active
         turn_on_fn=lambda api: api.set_floor_heat(True),
         turn_off_fn=lambda api: api.set_floor_heat(False),
     ),
     RixensSwitchEntityDescription(
         key="electric_heat",
         translation_key="electric_heat",
-        value_fn=lambda data: data.settings.electric_src == 2,  # 2 = active
+        value_fn=lambda data: data.settings.electric_src != 0,  # 0 = disabled, 1 = enabled, 2 = active
         turn_on_fn=lambda api: api.set_electric_heat(True),
         turn_off_fn=lambda api: api.set_electric_heat(False),
     ),
