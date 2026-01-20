@@ -217,13 +217,14 @@ class RixensApi:
 
         # Parse heater1 data
         # Note: All temperatures from API are in tenths of a degree Celsius
+        # Exception: flame_temp appears to be in whole degrees already
         heater1 = root.find("heater1")
         heater_data = RixensHeaterData(
             heat_on=get_bool(heater1, "heaton") if heater1 is not None else False,
             battery_voltage=get_int(heater1, "battv") / 10.0 if heater1 is not None else 0.0,
             runtime=get_int(heater1, "runtime") if heater1 is not None else 0,
             pid_speed=get_int(heater1, "pidspeed") if heater1 is not None else 0,
-            flame_temp=get_int(heater1, "flametemp") / 10.0 if heater1 is not None else 0.0,
+            flame_temp=float(get_int(heater1, "flametemp")) if heater1 is not None else 0.0,
             inlet_temp=get_int(heater1, "inlettemp") / 100.0 if heater1 is not None else 0.0,
             outlet_temp=get_int(heater1, "outlettemp") / 100.0 if heater1 is not None else 0.0,
             atmospheric_pressure=get_float(heater1, "altitude") if heater1 is not None else 0.0,  # XML field "altitude" is actually pressure in hPa
