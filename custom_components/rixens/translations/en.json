@@ -33,6 +33,9 @@
   },
   "entity": {
     "binary_sensor": {
+      "connection": {
+        "name": "Connection"
+      },
       "flame_failure": {
         "name": "Flame failure"
       },

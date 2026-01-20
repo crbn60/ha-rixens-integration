@@ -40,7 +40,20 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     try:
         status = await api.get_status()
     except RixensConnectionError as err:
+        _LOGGER.error(
+            "Failed to connect to Rixens device at %s:%s - %s",
+            data[CONF_HOST],
+            data.get(CONF_PORT, DEFAULT_PORT),
+            err,
+        )
         raise CannotConnect from err
+
+    _LOGGER.info(
+        "Successfully connected to Rixens device at %s:%s (version: %s)",
+        data[CONF_HOST],
+        data.get(CONF_PORT, DEFAULT_PORT),
+        status.version,
+    )
 
     # Return info that you want to store in the config entry
     return {"title": f"Rixens ({data[CONF_HOST]})", "version": status.version}

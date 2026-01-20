@@ -113,10 +113,14 @@ async def async_setup_entry(
 ) -> None:
     """Set up Rixens binary sensors based on a config entry."""
     coordinator: RixensCoordinator = hass.data[DOMAIN][entry.entry_id]
-    async_add_entities(
+
+    entities: list[BinarySensorEntity] = [
         RixensBinarySensor(coordinator, description)
         for description in BINARY_SENSOR_DESCRIPTIONS
-    )
+    ]
+    entities.append(RixensConnectionSensor(coordinator))
+
+    async_add_entities(entities)
 
 
 class RixensBinarySensor(CoordinatorEntity[RixensCoordinator], BinarySensorEntity):
@@ -144,3 +148,30 @@ class RixensBinarySensor(CoordinatorEntity[RixensCoordinator], BinarySensorEntit
         if self.coordinator.data:
             return self.entity_description.value_fn(self.coordinator.data)
         return None
+
+
+class RixensConnectionSensor(CoordinatorEntity[RixensCoordinator], BinarySensorEntity):
+    """Binary sensor showing device connection status."""
+
+    _attr_has_entity_name = True
+    _attr_device_class = BinarySensorDeviceClass.CONNECTIVITY
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+
+    def __init__(self, coordinator: RixensCoordinator) -> None:
+        """Initialize the connection sensor."""
+        super().__init__(coordinator)
+        self._attr_unique_id = f"{coordinator.config_entry.entry_id}_connection"
+        self._attr_translation_key = "connection"
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, coordinator.config_entry.entry_id)},
+        )
+
+    @property
+    def is_on(self) -> bool:
+        """Return True if device is connected."""
+        return self.coordinator.is_available
+
+    @property
+    def available(self) -> bool:
+        """Connection sensor is always available to show connection state."""
+        return True
