@@ -121,11 +121,12 @@ class RixensClimate(CoordinatorEntity[RixensCoordinator], ClimateEntity):
         if not self.coordinator.data:
             return HVACMode.OFF
 
-        # HVAC mode is HEAT if any heat source is enabled
-        # furnace_src == 2 or electric_src == 2 means that source is enabled
+        # HVAC mode is HEAT if any heat source is enabled (!= 0)
+        # Only furnace_src, electric_src, and engine_src are actual heat sources
         if (
-            self.coordinator.data.settings.furnace_src == 2
-            or self.coordinator.data.settings.electric_src == 2
+            self.coordinator.data.settings.furnace_src != 0
+            or self.coordinator.data.settings.electric_src != 0
+            or self.coordinator.data.settings.engine_src != 0
         ):
             return HVACMode.HEAT
 
@@ -136,29 +137,36 @@ class RixensClimate(CoordinatorEntity[RixensCoordinator], ClimateEntity):
         """Return the current HVAC action.
 
         Properly distinguishes between:
-        - OFF: HVAC mode is OFF
-        - IDLE: HVAC mode is HEAT but not calling for heat (temp >= setpoint)
-        - HEATING: Calling for heat and actively heating
+        - OFF: All heat sources disabled (all *src == 0)
+        - IDLE: Heat sources enabled but not calling for heat (systemheat == 0)
+        - HEATING: Calling for heat AND at least one source actively heating (*src == 2)
         """
         if not self.coordinator.data:
             return None
 
-        # If HVAC mode is OFF, action is OFF
-        if self.hvac_mode == HVACMode.OFF:
+        # Check if all heat sources are disabled
+        all_disabled = (
+            self.coordinator.data.settings.furnace_src == 0
+            and self.coordinator.data.settings.electric_src == 0
+            and self.coordinator.data.settings.engine_src == 0
+        )
+        if all_disabled:
             return HVACAction.OFF
 
         # system_heat indicates thermostat is calling for heat (temp < setpoint)
         if self.coordinator.data.system_heat:
-            # Check if actually heating (furnace running or electric on)
-            if (
-                self.coordinator.data.heater.heat_on
+            # Check if any heat source is actively heating (== 2)
+            any_heating = (
+                self.coordinator.data.settings.furnace_src == 2
                 or self.coordinator.data.settings.electric_src == 2
-            ):
+                or self.coordinator.data.settings.engine_src == 2
+            )
+            if any_heating:
                 return HVACAction.HEATING
             # Calling for heat but not heating yet (startup delay, etc.)
             return HVACAction.IDLE
 
-        # HVAC mode is HEAT but not calling for heat (temp >= setpoint)
+        # Heat sources enabled but not calling for heat (temp >= setpoint)
         return HVACAction.IDLE
 
     @property
@@ -184,10 +192,12 @@ class RixensClimate(CoordinatorEntity[RixensCoordinator], ClimateEntity):
             return {}
 
         return {
-            "furnace_enabled": self.coordinator.data.settings.furnace_src == 2,
-            "electric_heat_enabled": self.coordinator.data.settings.electric_src == 2,
-            "floor_heat_enabled": self.coordinator.data.settings.floor_src == 2,
-            "furnace_active": self.coordinator.data.heater.heat_on,
+            "furnace_enabled": self.coordinator.data.settings.furnace_src != 0,
+            "furnace_active": self.coordinator.data.settings.furnace_src == 2,
+            "electric_heat_enabled": self.coordinator.data.settings.electric_src != 0,
+            "electric_heat_active": self.coordinator.data.settings.electric_src == 2,
+            "engine_heat_enabled": self.coordinator.data.settings.engine_src != 0,
+            "engine_heat_active": self.coordinator.data.settings.engine_src == 2,
             "system_calling_for_heat": self.coordinator.data.system_heat,
             "current_humidity": self.coordinator.data.current_humidity,
         }
@@ -204,26 +214,27 @@ class RixensClimate(CoordinatorEntity[RixensCoordinator], ClimateEntity):
         """Set new HVAC mode.
 
         Preserves heat source configuration when toggling between OFF and HEAT.
-        When turning on, restores previously enabled sources (or defaults to both).
+        When turning on, restores previously enabled sources (or defaults to furnace).
         When turning off, remembers which sources were enabled.
         """
         if hvac_mode == HVACMode.HEAT:
-            # Restore previous configuration or default to both sources
+            # Restore previous configuration or default to furnace only
             if self._last_heat_sources:
                 if self._last_heat_sources.get("furnace"):
                     await self.coordinator.api.set_furnace(True)
                 if self._last_heat_sources.get("electric"):
                     await self.coordinator.api.set_electric_heat(True)
+                # Note: engine heat cannot be controlled via API
             else:
-                # Default: enable both heat sources
+                # Default: enable furnace only
                 await self.coordinator.api.set_furnace(True)
-                await self.coordinator.api.set_electric_heat(True)
         elif hvac_mode == HVACMode.OFF:
             # Save current heat source state before turning off
             if self.coordinator.data:
                 self._last_heat_sources = {
-                    "furnace": self.coordinator.data.settings.furnace_src == 2,
-                    "electric": self.coordinator.data.settings.electric_src == 2,
+                    "furnace": self.coordinator.data.settings.furnace_src != 0,
+                    "electric": self.coordinator.data.settings.electric_src != 0,
+                    # Engine heat state is tracked but cannot be controlled via API
                 }
             await self.coordinator.api.set_furnace(False)
             await self.coordinator.api.set_electric_heat(False)
