@@ -73,7 +73,7 @@ class RixensConfigFlow(ConfigFlow, domain=DOMAIN):
     @staticmethod
     def async_get_options_flow(config_entry):
         """Get the options flow for this handler."""
-        return RixensOptionsFlowHandler(config_entry)
+        return RixensOptionsFlowHandler()
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -104,10 +104,6 @@ class RixensConfigFlow(ConfigFlow, domain=DOMAIN):
 
 class RixensOptionsFlowHandler(OptionsFlow):
     """Handle options flow for Rixens integration."""
-
-    def __init__(self, config_entry):
-        """Initialize options flow."""
-        self.config_entry = config_entry
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
