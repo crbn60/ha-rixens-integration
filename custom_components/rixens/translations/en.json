@@ -21,12 +21,13 @@
   "options": {
     "step": {
       "init": {
-        "title": "Preset Temperatures",
-        "description": "Configure temperature presets for Away, Home, and Sleep modes.",
+        "title": "Preset Temperatures & Fuel Configuration",
+        "description": "Configure temperature presets for Away, Home, and Sleep modes, and fuel dose calibration.",
         "data": {
           "preset_away_temp": "Away temperature (°C)",
           "preset_home_temp": "Home temperature (°C)",
-          "preset_sleep_temp": "Sleep temperature (°C)"
+          "preset_sleep_temp": "Sleep temperature (°C)",
+          "fuel_dose": "Fuel dose per pump cycle (ml)"
         }
       }
     }

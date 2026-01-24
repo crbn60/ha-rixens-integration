@@ -14,7 +14,13 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .api import RixensApi, RixensConnectionError
-from .const import CONF_PORT, DEFAULT_PORT, DOMAIN
+from .const import (
+    CONF_FUEL_DOSE,
+    CONF_PORT,
+    DEFAULT_FUEL_DOSE,
+    DEFAULT_PORT,
+    DOMAIN,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -125,6 +131,10 @@ class RixensOptionsFlowHandler(OptionsFlow):
                         "preset_sleep_temp",
                         default=current_options.get("preset_sleep_temp", 18.0),
                     ): vol.All(vol.Coerce(float), vol.Range(min=5.0, max=30.0)),
+                    vol.Optional(
+                        CONF_FUEL_DOSE,
+                        default=current_options.get(CONF_FUEL_DOSE, DEFAULT_FUEL_DOSE),
+                    ): vol.All(vol.Coerce(float), vol.Range(min=0.001, max=1.0)),
                 }
             ),
         )

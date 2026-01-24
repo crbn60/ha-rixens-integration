@@ -23,3 +23,7 @@ TEMP_STEP = 0.5
 # Heater states
 HEATER_STATE_OFF = 0
 HEATER_STATE_RUNNING = 20
+
+# Fuel consumption constants
+CONF_FUEL_DOSE = "fuel_dose"
+DEFAULT_FUEL_DOSE = 0.0297979798  # ml per dose (improved accuracy)

@@ -27,7 +27,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .api import RixensData
-from .const import DOMAIN
+from .const import CONF_FUEL_DOSE, DEFAULT_FUEL_DOSE, DOMAIN
 from .coordinator import RixensCoordinator
 
 
@@ -148,7 +148,7 @@ SENSOR_DESCRIPTIONS: tuple[RixensSensorEntityDescription, ...] = (
         native_unit_of_measurement=f"{UnitOfVolume.MILLILITERS}/h",
         state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
-        value_fn=lambda data: round(data.heater.dosing_pump * 72, 2) if data.heater.dosing_pump else 0,
+        value_fn=lambda data: data.heater.dosing_pump,  # Will be calculated in native_value
     ),
     RixensSensorEntityDescription(
         key="heater_state",
@@ -206,5 +206,15 @@ class RixensSensor(CoordinatorEntity[RixensCoordinator], SensorEntity):
     def native_value(self) -> float | int | str | None:
         """Return the state of the sensor."""
         if self.coordinator.data:
-            return self.entity_description.value_fn(self.coordinator.data)
+            value = self.entity_description.value_fn(self.coordinator.data)
+
+            # Special handling for fuel consumption - apply configurable dose
+            if self.entity_description.key == "fuel_consumption" and value:
+                fuel_dose = self.coordinator.config_entry.options.get(
+                    CONF_FUEL_DOSE, DEFAULT_FUEL_DOSE
+                )
+                # Convert Hz to ml/h: dosing_pump (Hz) * fuel_dose (ml/dose) * 3600 (sec/hr)
+                return round(value * fuel_dose * 3600, 2)
+
+            return value
         return None
