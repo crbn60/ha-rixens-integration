@@ -68,6 +68,7 @@ SAMPLE_XML = """\
   <furnacesrc>2</furnacesrc>
   <electricsrc>0</electricsrc>
   <enginesrc>0</enginesrc>
+  <cnstheat>0</cnstheat>
 </settings>
 </response>
 """
@@ -89,6 +90,7 @@ def make_rixens_data(
     electric_src: int = 0,
     engine_src: int = 0,
     floor_src: int = 2,
+    cnst_heat: int = 0,
     heat_on: bool = True,
     battery_voltage: float = 12.5,
     runtime: int = 114236,
@@ -154,6 +156,7 @@ def make_rixens_data(
             furnace_src=furnace_src,
             electric_src=electric_src,
             engine_src=engine_src,
+            cnst_heat=cnst_heat,
         ),
     )
 
@@ -180,6 +183,7 @@ def mock_api() -> AsyncMock:
     api.set_floor_heat = AsyncMock()
     api.set_fan = AsyncMock()
     api.set_electric_heat = AsyncMock()
+    api.set_continuous_heat = AsyncMock()
     api.close = AsyncMock()
     return api
 

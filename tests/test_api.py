@@ -346,6 +346,20 @@ class TestControlMethods:
             await api.set_electric_heat(False)
             await api.close()
 
+    async def test_set_continuous_heat_on(self):
+        with aioresponses() as m:
+            m.get("http://192.168.1.1/interface.cgi?act=6&val=1", body="OK")
+            api = RixensApi(host="192.168.1.1")
+            await api.set_continuous_heat(True)
+            await api.close()
+
+    async def test_set_continuous_heat_off(self):
+        with aioresponses() as m:
+            m.get("http://192.168.1.1/interface.cgi?act=6&val=0", body="OK")
+            api = RixensApi(host="192.168.1.1")
+            await api.set_continuous_heat(False)
+            await api.close()
+
 
 # ---------------------------------------------------------------------------
 # close

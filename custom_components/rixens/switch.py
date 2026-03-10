@@ -56,6 +56,13 @@ SWITCH_DESCRIPTIONS: tuple[RixensSwitchEntityDescription, ...] = (
         turn_on_fn=lambda api: api.set_fan(True),
         turn_off_fn=lambda api: api.set_fan(False),
     ),
+    RixensSwitchEntityDescription(
+        key="continuous_heat",
+        translation_key="continuous_heat",
+        value_fn=lambda data: data.settings.cnst_heat != 0,
+        turn_on_fn=lambda api: api.set_continuous_heat(True),
+        turn_off_fn=lambda api: api.set_continuous_heat(False),
+    ),
 )
 
 
