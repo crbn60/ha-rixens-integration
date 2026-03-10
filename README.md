@@ -1,5 +1,6 @@
 # Rixens Integration for Home Assistant
 
+[![Validate](https://github.com/crbn60/ha-rixens-integration/actions/workflows/validate.yml/badge.svg)](https://github.com/crbn60/ha-rixens-integration/actions/workflows/validate.yml)
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
 [![GitHub Release](https://img.shields.io/github/v/release/crbn60/ha-rixens-integration)](https://github.com/crbn60/ha-rixens-integration/releases)
 [![GitHub Issues](https://img.shields.io/github/issues/crbn60/ha-rixens-integration)](https://github.com/crbn60/ha-rixens-integration/issues)
