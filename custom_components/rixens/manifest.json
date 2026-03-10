@@ -1,7 +1,6 @@
 {
   "domain": "rixens",
   "name": "Rixens",
-  "icon": "mdi:heating-coil",
   "codeowners": ["@crbn60"],
   "config_flow": true,
   "dependencies": [],
