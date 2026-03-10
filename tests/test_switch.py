@@ -129,6 +129,28 @@ class TestSwitchEntity:
         await switch.async_turn_off()
         mock_coordinator.api.set_fan.assert_awaited_once_with(False)
 
+    # --- Continuous heat ---
+
+    def test_continuous_heat_on(self, mock_coordinator):
+        mock_coordinator.data = make_rixens_data(cnst_heat=2)
+        switch = self._make_switch(mock_coordinator, "continuous_heat")
+        assert switch.is_on is True
+
+    def test_continuous_heat_off(self, mock_coordinator):
+        mock_coordinator.data = make_rixens_data(cnst_heat=0)
+        switch = self._make_switch(mock_coordinator, "continuous_heat")
+        assert switch.is_on is False
+
+    async def test_continuous_heat_turn_on(self, mock_coordinator):
+        switch = self._make_switch(mock_coordinator, "continuous_heat")
+        await switch.async_turn_on()
+        mock_coordinator.api.set_continuous_heat.assert_awaited_once_with(True)
+
+    async def test_continuous_heat_turn_off(self, mock_coordinator):
+        switch = self._make_switch(mock_coordinator, "continuous_heat")
+        await switch.async_turn_off()
+        mock_coordinator.api.set_continuous_heat.assert_awaited_once_with(False)
+
     # --- No data ---
 
     def test_is_on_no_data(self, mock_coordinator):

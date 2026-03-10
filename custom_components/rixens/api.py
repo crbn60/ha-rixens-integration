@@ -60,6 +60,7 @@ class RixensSettings:
     furnace_src: int  # Furnace heat source
     electric_src: int  # Electric heat source
     engine_src: int  # Engine heat source
+    cnst_heat: int  # Continuous heat (0=off, non-zero=on)
 
 
 @dataclass
@@ -270,6 +271,7 @@ class RixensApi:
             furnace_src=get_int(settings_elem, "furnacesrc") if settings_elem is not None else 0,
             electric_src=get_int(settings_elem, "electricsrc") if settings_elem is not None else 0,
             engine_src=get_int(settings_elem, "enginesrc") if settings_elem is not None else 0,
+            cnst_heat=get_int(settings_elem, "cnstheat") if settings_elem is not None else 0,
         )
 
         return RixensData(
@@ -315,6 +317,10 @@ class RixensApi:
     async def set_electric_heat(self, on: bool) -> None:
         """Turn electric heat on or off."""
         await self._request(f"/interface.cgi?act=4&val={1 if on else 0}")
+
+    async def set_continuous_heat(self, on: bool) -> None:
+        """Turn continuous heat on or off."""
+        await self._request(f"/interface.cgi?act=6&val={1 if on else 0}")
 
     async def close(self) -> None:
         """Close the session."""
