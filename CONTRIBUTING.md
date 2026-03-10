@@ -62,16 +62,16 @@ exactly what still needs a test.
 
 ### What to test
 
-| Area              | What to cover                                                                                    |
-| ----------------- | ------------------------------------------------------------------------------------------------ |
-| `api.py`          | Every public method, every exception type raised, every branch (e.g., missing fields, XML parse errors) |
-| `coordinator.py`  | Setup, update, error paths, and the `data is None` initialisation branches                       |
-| `config_flow.py`  | All error cases (`cannot_connect`, `unknown`), duplicate-device abort, reconfigure flow          |
-| `sensor.py`       | Each entity property, unique ID format, and edge cases (missing data fields)                     |
-| `switch.py`       | Each switch entity, turn on/off actions, state extraction                                        |
-| `climate.py`      | HVAC modes, fan modes, temperature setting, state properties                                     |
-| `number.py`       | Fan speed slider value, set_value action                                                         |
-| `__init__.py`     | Setup success, connection failure, unload                                                        |
+| Area             | What to cover                                                                                           |
+| ---------------- | ------------------------------------------------------------------------------------------------------- |
+| `api.py`         | Every public method, every exception type raised, every branch (e.g., missing fields, XML parse errors) |
+| `coordinator.py` | Setup, update, error paths, and the `data is None` initialisation branches                              |
+| `config_flow.py` | All error cases (`cannot_connect`, `unknown`), duplicate-device abort, reconfigure flow                 |
+| `sensor.py`      | Each entity property, unique ID format, and edge cases (missing data fields)                            |
+| `switch.py`      | Each switch entity, turn on/off actions, state extraction                                               |
+| `climate.py`     | HVAC modes, fan modes, temperature setting, state properties                                            |
+| `number.py`      | Fan speed slider value, set_value action                                                                |
+| `__init__.py`    | Setup success, connection failure, unload                                                               |
 
 ### Test patterns
 

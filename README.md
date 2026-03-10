@@ -39,11 +39,13 @@ After installation, the integration creates the following entities:
 ### Sensors
 
 #### Environmental Sensors
+
 - **Temperature** - Current room temperature
 - **Humidity** - Current room humidity
 - **Atmospheric Pressure** - Barometric pressure in hPa (used for altitude compensation)
 
 #### Heater Diagnostic Sensors
+
 - **Battery Voltage** - RV battery voltage monitoring
 - **Flame Temperature** - Burner flame temperature
 - **Inlet Temperature** - Heater inlet coolant temperature
@@ -52,12 +54,14 @@ After installation, the integration creates the following entities:
 - **System Uptime** - Device uptime since last restart
 
 #### Performance Sensors
+
 - **PID Speed** - Current PID-controlled fan speed percentage
 - **Burner Motor** - Burner motor RPM
 - **Dosing Pump** - Fuel pump frequency in Hz
 - **Fuel Consumption** - Current fuel consumption rate in ml/h
 
 #### System Information
+
 - **Heater State** - Current operational state code
 - **Firmware Version** - Main controller firmware version
 - **Heat Firmware Version** - Heater module firmware version
@@ -118,6 +122,7 @@ Changes apply immediately without restarting Home Assistant.
 ### Automatic Retry and Error Handling
 
 The integration includes robust error handling:
+
 - **Automatic Retry**: Failed API calls are automatically retried up to 3 times with exponential backoff
 - **Graceful Degradation**: During temporary network issues, entities remain available with last known data for up to 50 seconds
 - **Connection Monitoring**: Binary sensor shows real-time connection status
@@ -126,6 +131,7 @@ The integration includes robust error handling:
 ### Heat Source State Preservation
 
 When turning the climate entity on/off:
+
 - The integration remembers which heat sources (furnace, electric) were enabled
 - Turning back on restores your previous heat source configuration
 - Respects preferences set via individual switch entities
@@ -133,6 +139,7 @@ When turning the climate entity on/off:
 ### Fan Speed Intelligence
 
 The fan speed entity adapts based on mode:
+
 - **Auto Mode**: Displays actual PID-controlled speed from heater
 - **Manual Mode**: Shows and controls configured speed setpoint
 - **State Attributes**: Additional info shows mode, actual speed, and configured speed
@@ -140,6 +147,7 @@ The fan speed entity adapts based on mode:
 ### HVAC Action States
 
 The climate entity properly distinguishes between:
+
 - **Off**: HVAC mode is off
 - **Idle**: Heating enabled but temperature at/above setpoint
 - **Heating**: Actively calling for heat and heat sources running
@@ -194,7 +202,7 @@ automation:
   - alias: "Use Electric Heat on Shore Power"
     trigger:
       - platform: state
-        entity_id: binary_sensor.shore_power  # Your shore power sensor
+        entity_id: binary_sensor.shore_power # Your shore power sensor
         to: "on"
     condition:
       - condition: state
@@ -287,6 +295,7 @@ This integration is designed for Rixens RV heating systems that expose an HTTP A
 ### API Compatibility
 
 The integration expects the device to support these API endpoints:
+
 - `GET /status.xml` - Device status (polled every 5 seconds)
 - `GET /interface.cgi?act=1&val=XXX` - Set temperature setpoint
 - `GET /interface.cgi?act=2&val=XXX` - Set fan speed

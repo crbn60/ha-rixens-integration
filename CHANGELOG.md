@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - 2026-01-16
 
 ### Added
+
 - Initial release of Rixens Home Assistant integration
 - Climate entity for thermostat control
   - Temperature setpoint control (5-35°C)
@@ -33,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Integration icon with Rixens branding
 
 ### Technical
+
 - Local polling every 5 seconds
 - XML-based HTTP API communication
 - Automatic unit conversions (temperatures, altitude, dosing pump)
