@@ -73,12 +73,23 @@ The Rixens device exposes an HTTP API:
 2. Add entity description in appropriate platform file
 3. Add translation key in `strings.json` and `translations/en.json`
 
+## Python Environment
+
+Always activate the local venv before running any Python command:
+
+```bash
+source .venv/bin/activate
+```
+
+The project is pinned to **Python 3.14** (see `.python-version`). All commands
+below assume the venv is active.
+
 ## Dev Commands
 
-- **Test:** `pytest tests/ -v --cov=custom_components/rixens`
-- **Lint:** `ruff check custom_components/`
-- **Format:** `ruff format custom_components/`
-- **Type-check:** `/opt/homebrew/bin/pyright custom_components/`
+- **Test:** `source .venv/bin/activate && pytest tests/ -v --cov=custom_components/rixens`
+- **Lint:** `source .venv/bin/activate && ruff check custom_components/`
+- **Format:** `source .venv/bin/activate && ruff format custom_components/`
+- **Type-check:** `source .venv/bin/activate && pyright custom_components/`
 
 ## Testing
 
