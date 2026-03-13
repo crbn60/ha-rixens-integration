@@ -12,7 +12,7 @@ from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN, FAN_SPEED_AUTO, FAN_SPEED_MAX, FAN_SPEED_MIN, FAN_SPEED_STEP
+from .const import DEVICE_FAN_AUTO, DEVICE_FAN_OFF, DOMAIN, FAN_SPEED_MAX, FAN_SPEED_MIN, FAN_SPEED_STEP
 from .coordinator import RixensCoordinator
 
 
@@ -46,11 +46,11 @@ class RixensFanSpeed(CoordinatorEntity[RixensCoordinator], NumberEntity):
         )
 
     def _is_auto_mode(self) -> bool:
-        """Check if fan is in auto mode."""
+        """Check if fan is in auto or off mode (not manual speed)."""
         if not self.coordinator.data:
             return False
         fan_speed = self.coordinator.data.settings.fan_speed
-        return fan_speed == "Auto" or fan_speed == str(FAN_SPEED_AUTO)
+        return fan_speed in (DEVICE_FAN_AUTO, DEVICE_FAN_OFF)
 
     @property
     def native_value(self) -> float | None:

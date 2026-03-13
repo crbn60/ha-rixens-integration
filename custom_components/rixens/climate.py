@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 from homeassistant.components.climate import (
@@ -21,16 +22,24 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import (
+    DEVICE_FAN_AUTO,
+    DEVICE_FAN_OFF,
     DOMAIN,
-    FAN_SPEED_AUTO,
+    FAN_MODE_AUTO,
+    FAN_MODE_OFF,
     FAN_SPEED_MAX,
     FAN_SPEED_MIN,
+    FAN_SPEED_STEP,
     TEMP_MAX,
     TEMP_MIN,
 )
 from .coordinator import RixensCoordinator
 
-FAN_MODES = ["auto", "10", "20", "30", "40", "50", "60", "70", "80", "90", "100"]
+_LOGGER = logging.getLogger(__name__)
+
+FAN_MODES = [FAN_MODE_OFF, FAN_MODE_AUTO] + [
+    str(s) for s in range(FAN_SPEED_MIN, FAN_SPEED_MAX + 1, FAN_SPEED_STEP)
+]
 
 # Default preset temperatures (can be customized via integration options)
 DEFAULT_PRESET_TEMPS = {
@@ -176,9 +185,19 @@ class RixensClimate(CoordinatorEntity[RixensCoordinator], ClimateEntity):
             return None
 
         fan_speed = self.coordinator.data.settings.fan_speed
-        if fan_speed == "Auto" or fan_speed == str(FAN_SPEED_AUTO):
-            return "auto"
-        return fan_speed
+        if fan_speed == DEVICE_FAN_OFF:
+            return FAN_MODE_OFF
+        if fan_speed == DEVICE_FAN_AUTO:
+            return FAN_MODE_AUTO
+        # Numeric value — snap to nearest valid step
+        try:
+            speed = int(fan_speed)
+            clamped = max(FAN_SPEED_MIN, min(FAN_SPEED_MAX, speed))
+            snapped = round(clamped / FAN_SPEED_STEP) * FAN_SPEED_STEP
+            return str(snapped)
+        except (ValueError, TypeError):
+            _LOGGER.warning("Unexpected fan speed value from device: %s", fan_speed)
+            return FAN_MODE_AUTO
 
     @property
     def preset_mode(self) -> str | None:
@@ -241,13 +260,20 @@ class RixensClimate(CoordinatorEntity[RixensCoordinator], ClimateEntity):
         await self.coordinator.async_request_refresh()
 
     async def async_set_fan_mode(self, fan_mode: str) -> None:
-        """Set new fan mode."""
-        if fan_mode == "auto":
-            await self.coordinator.api.set_fan_speed(FAN_SPEED_AUTO)
+        """Set new fan mode.
+
+        Off/auto use the fan on/off control (act=8).
+        Manual speeds use the fan speed control (act=2).
+        """
+        if fan_mode == FAN_MODE_OFF:
+            await self.coordinator.api.set_fan(False)
+        elif fan_mode == FAN_MODE_AUTO:
+            await self.coordinator.api.set_fan(True)
         else:
             speed = int(fan_mode)
-            if FAN_SPEED_MIN <= speed <= FAN_SPEED_MAX:
-                await self.coordinator.api.set_fan_speed(speed)
+            if not FAN_SPEED_MIN <= speed <= FAN_SPEED_MAX:
+                return
+            await self.coordinator.api.set_fan_speed(speed)
         await self.coordinator.async_request_refresh()
 
     async def async_set_preset_mode(self, preset_mode: str) -> None:

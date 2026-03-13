@@ -15,7 +15,6 @@ from homeassistant.components.climate import (
 from homeassistant.const import ATTR_TEMPERATURE
 
 from custom_components.rixens.climate import RixensClimate
-from custom_components.rixens.const import FAN_SPEED_AUTO
 
 from .conftest import make_rixens_data
 
@@ -122,13 +121,13 @@ class TestHvacAction:
 class TestFanMode:
     """Tests for fan mode property."""
 
-    def test_auto_mode_string(self, mock_coordinator):
-        mock_coordinator.data = make_rixens_data(fan_speed="Auto")
+    def test_off_mode(self, mock_coordinator):
+        mock_coordinator.data = make_rixens_data(fan_speed="Off")
         climate = RixensClimate(mock_coordinator)
-        assert climate.fan_mode == "auto"
+        assert climate.fan_mode == "off"
 
-    def test_auto_mode_numeric(self, mock_coordinator):
-        mock_coordinator.data = make_rixens_data(fan_speed=str(FAN_SPEED_AUTO))
+    def test_auto_mode(self, mock_coordinator):
+        mock_coordinator.data = make_rixens_data(fan_speed="Auto")
         climate = RixensClimate(mock_coordinator)
         assert climate.fan_mode == "auto"
 
@@ -136,6 +135,24 @@ class TestFanMode:
         mock_coordinator.data = make_rixens_data(fan_speed="50")
         climate = RixensClimate(mock_coordinator)
         assert climate.fan_mode == "50"
+
+    def test_manual_speed_snapped(self, mock_coordinator):
+        """Non-standard speed is snapped to nearest valid step."""
+        mock_coordinator.data = make_rixens_data(fan_speed="47")
+        climate = RixensClimate(mock_coordinator)
+        assert climate.fan_mode == "50"
+
+    def test_manual_speed_clamped_low(self, mock_coordinator):
+        """Speed below minimum is clamped to minimum."""
+        mock_coordinator.data = make_rixens_data(fan_speed="3")
+        climate = RixensClimate(mock_coordinator)
+        assert climate.fan_mode == "10"
+
+    def test_unparseable_falls_back_to_auto(self, mock_coordinator):
+        """Unexpected string value falls back to auto."""
+        mock_coordinator.data = make_rixens_data(fan_speed="unknown")
+        climate = RixensClimate(mock_coordinator)
+        assert climate.fan_mode == "auto"
 
     def test_none_when_no_data(self, mock_coordinator):
         mock_coordinator.data = None
@@ -229,10 +246,17 @@ class TestClimateActions:
         mock_coordinator.api.set_furnace.assert_awaited_with(False)
         mock_coordinator.api.set_electric_heat.assert_awaited_with(False)
 
+    async def test_set_fan_mode_off(self, mock_coordinator):
+        climate = RixensClimate(mock_coordinator)
+        await climate.async_set_fan_mode("off")
+        mock_coordinator.api.set_fan.assert_awaited_once_with(False)
+        mock_coordinator.api.set_fan_speed.assert_not_awaited()
+
     async def test_set_fan_mode_auto(self, mock_coordinator):
         climate = RixensClimate(mock_coordinator)
         await climate.async_set_fan_mode("auto")
-        mock_coordinator.api.set_fan_speed.assert_awaited_once_with(FAN_SPEED_AUTO)
+        mock_coordinator.api.set_fan.assert_awaited_once_with(True)
+        mock_coordinator.api.set_fan_speed.assert_not_awaited()
 
     async def test_set_fan_mode_manual(self, mock_coordinator):
         climate = RixensClimate(mock_coordinator)
@@ -240,10 +264,11 @@ class TestClimateActions:
         mock_coordinator.api.set_fan_speed.assert_awaited_once_with(50)
 
     async def test_set_fan_mode_out_of_range(self, mock_coordinator):
-        """Fan speed outside valid range is not sent."""
+        """Fan speed outside valid range is not sent and no refresh is triggered."""
         climate = RixensClimate(mock_coordinator)
         await climate.async_set_fan_mode("5")
         mock_coordinator.api.set_fan_speed.assert_not_awaited()
+        mock_coordinator.async_request_refresh.assert_not_awaited()
 
     async def test_set_preset_mode(self, mock_coordinator):
         climate = RixensClimate(mock_coordinator)

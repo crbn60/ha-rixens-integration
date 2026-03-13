@@ -10,10 +10,17 @@ CONF_PORT = "port"
 DEFAULT_PORT = 80
 
 # Fan speed constants
-FAN_SPEED_AUTO = 999
 FAN_SPEED_MIN = 10
 FAN_SPEED_MAX = 100
 FAN_SPEED_STEP = 10
+
+# Fan mode values reported by the device XML (<fanspeed> element)
+DEVICE_FAN_OFF = "Off"
+DEVICE_FAN_AUTO = "Auto"
+
+# Fan mode values used in the HA climate entity
+FAN_MODE_OFF = "off"
+FAN_MODE_AUTO = "auto"
 
 # Temperature constants (Celsius)
 TEMP_MIN = 5
