@@ -6,7 +6,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from custom_components.rixens.const import FAN_SPEED_AUTO, FAN_SPEED_MAX, FAN_SPEED_MIN
+from custom_components.rixens.const import FAN_SPEED_MAX, FAN_SPEED_MIN
 from custom_components.rixens.number import RixensFanSpeed
 
 from .conftest import make_rixens_data
@@ -33,8 +33,8 @@ class TestIsAutoMode:
         entity = RixensFanSpeed(mock_coordinator)
         assert entity._is_auto_mode() is True
 
-    def test_auto_numeric(self, mock_coordinator):
-        mock_coordinator.data = make_rixens_data(fan_speed=str(FAN_SPEED_AUTO))
+    def test_off_string(self, mock_coordinator):
+        mock_coordinator.data = make_rixens_data(fan_speed="Off")
         entity = RixensFanSpeed(mock_coordinator)
         assert entity._is_auto_mode() is True
 
