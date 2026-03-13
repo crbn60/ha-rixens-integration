@@ -174,24 +174,6 @@ automation:
 - Search existing [issues](https://github.com/crbn60/ha-rixens-integration/issues) — someone may have had the same problem
 - Open a [new issue](https://github.com/crbn60/ha-rixens-integration/issues/new) with your Home Assistant version, integration version, and relevant logs
 
-## Device Compatibility
-
-This integration works with Rixens RV heating systems that have a WiFi connection and expose an HTTP interface on port 80.
-
-<details>
-<summary>Supported API endpoints (for developers)</summary>
-
-- `GET /status.xml` — Device status (polled every 5 seconds)
-- `GET /interface.cgi?act=1&val=XXX` — Set temperature setpoint
-- `GET /interface.cgi?act=2&val=XXX` — Set fan speed
-- `GET /interface.cgi?act=4&val=X` — Control electric heat
-- `GET /interface.cgi?act=5&val=X` — Control furnace
-- `GET /interface.cgi?act=6&val=X` — Control continuous heat
-- `GET /interface.cgi?act=8&val=X` — Control fan
-- `GET /interface.cgi?act=10&val=X` — Control floor heat
-
-</details>
-
 ## Contributing
 
 Contributions are welcome! See [DEVELOPER.md](DEVELOPER.md) for project architecture, entity details, and development guidelines. For major changes, please open an issue first to discuss.

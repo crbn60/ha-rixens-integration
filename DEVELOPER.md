@@ -149,6 +149,19 @@ When turning the climate entity on/off:
 | number        | Fan speed (10-100%)                                                                              |
 | binary_sensor | Connection status                                                                                |
 
+## Device Compatibility
+
+This integration works with Rixens RV heating systems that have a WiFi connection and expose an HTTP interface on port 80.
+
+### Tested Devices
+
+Firmware versions known to work:
+
+```xml
+<version>HW2-1.205 2025_11_20 RIXENS</version>
+<heatversion>1.06 2025-11-21 PID</heatversion>
+```
+
 ## Adding New Controls
 
 1. Add API method in `api.py`
