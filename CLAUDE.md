@@ -1,10 +1,13 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with
+code in this repository.
 
 ## Project Overview
 
-This is a Home Assistant custom integration for Rixens RV heating/climate control systems, distributed via HACS. The integration communicates with Rixens devices over HTTP using a local polling approach.
+This is a Home Assistant custom integration for Rixens RV heating/climate
+control systems, distributed via HACS. The integration communicates with Rixens
+devices over HTTP using a local polling approach.
 
 ## Architecture
 
@@ -30,7 +33,8 @@ The Rixens device exposes an HTTP API:
 
 **Status endpoint:** `GET /status.xml` - Returns XML with all device state
 
-- All temperature values are in **tenths of a degree Celsius** (e.g., 171 = 17.1°C)
+- All temperature values are in **tenths of a degree Celsius** (e.g., 171 =
+  17.1°C)
 - Home Assistant handles display unit conversion based on user preferences
 
 **Control endpoints:** All use GET requests
@@ -44,10 +48,14 @@ The Rixens device exposes an HTTP API:
 
 ## Key Patterns
 
-- **Coordinator pattern**: `RixensCoordinator` polls the device every 5 seconds and distributes data to all entities
-- **Entity descriptions**: Sensors and switches use dataclass descriptions with `value_fn` callbacks for clean state extraction
-- **API client**: `RixensApi` handles HTTP communication and XML parsing, uses Home Assistant's shared aiohttp session
-- **Entities**: All entities inherit from `CoordinatorEntity` for automatic updates
+- **Coordinator pattern**: `RixensCoordinator` polls the device every 5 seconds
+  and distributes data to all entities
+- **Entity descriptions**: Sensors and switches use dataclass descriptions with
+  `value_fn` callbacks for clean state extraction
+- **API client**: `RixensApi` handles HTTP communication and XML parsing, uses
+  Home Assistant's shared aiohttp session
+- **Entities**: All entities inherit from `CoordinatorEntity` for automatic
+  updates
 
 ## Platforms
 
@@ -62,7 +70,8 @@ The Rixens device exposes an HTTP API:
 
 **Testing in Home Assistant:**
 
-1. Copy `custom_components/rixens/` to your HA `config/custom_components/` directory
+1. Copy `custom_components/rixens/` to your HA `config/custom_components/`
+   directory
 2. Restart Home Assistant
 3. Add integration via Settings > Devices & Services > Add Integration > Rixens
 4. Enter device IP address (port defaults to 80)
@@ -86,14 +95,16 @@ below assume the venv is active.
 
 ## Dev Commands
 
-- **Test:** `source .venv/bin/activate && pytest tests/ -v --cov=custom_components/rixens`
+- **Test:**
+  `source .venv/bin/activate && pytest tests/ -v --cov=custom_components/rixens`
 - **Lint:** `source .venv/bin/activate && ruff check custom_components/`
 - **Format:** `source .venv/bin/activate && ruff format custom_components/`
 - **Type-check:** `source .venv/bin/activate && pyright custom_components/`
 
 ## Testing
 
-- Tests live in `tests/` and mirror the module structure of `custom_components/rixens/`
+- Tests live in `tests/` and mirror the module structure of
+  `custom_components/rixens/`
 - 90% code coverage threshold enforced by CI
 - Use `aioresponses` for HTTP-level mocking
 - See `CONTRIBUTING.md` for full testing requirements and patterns

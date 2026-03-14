@@ -76,8 +76,8 @@ exactly what still needs a test.
 ### Test patterns
 
 Use shared fixtures in `tests/conftest.py` (`mock_coordinator`, `mock_api`,
-etc.) rather than duplicating setup logic in individual test files. When you need
-HTTP-level mocking, use `aioresponses`.
+etc.) rather than duplicating setup logic in individual test files. When you
+need HTTP-level mocking, use `aioresponses`.
 
 ## Testing a Branch on Your Home Assistant Install
 

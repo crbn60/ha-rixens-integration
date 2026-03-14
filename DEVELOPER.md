@@ -1,6 +1,7 @@
 # Developer Guide
 
-This document covers the technical architecture, entity details, and development workflow for the Rixens Home Assistant integration.
+This document covers the technical architecture, entity details, and development
+workflow for the Rixens Home Assistant integration.
 
 ## Architecture
 
@@ -22,10 +23,14 @@ custom_components/rixens/
 
 ## Key Patterns
 
-- **Coordinator pattern**: `RixensCoordinator` polls the device every 5 seconds and distributes data to all entities
-- **Entity descriptions**: Sensors and switches use dataclass descriptions with `value_fn` callbacks for clean state extraction
-- **API client**: `RixensApi` handles HTTP communication and XML parsing, uses Home Assistant's shared aiohttp session
-- **Entities**: All entities inherit from `CoordinatorEntity` for automatic updates
+- **Coordinator pattern**: `RixensCoordinator` polls the device every 5 seconds
+  and distributes data to all entities
+- **Entity descriptions**: Sensors and switches use dataclass descriptions with
+  `value_fn` callbacks for clean state extraction
+- **API client**: `RixensApi` handles HTTP communication and XML parsing, uses
+  Home Assistant's shared aiohttp session
+- **Entities**: All entities inherit from `CoordinatorEntity` for automatic
+  updates
 
 ## Device API
 
@@ -35,7 +40,8 @@ The Rixens device exposes an HTTP API:
 
 `GET /status.xml` — Returns XML with all device state.
 
-- All temperature values are in **tenths of a degree Celsius** (e.g., 171 = 17.1°C)
+- All temperature values are in **tenths of a degree Celsius** (e.g., 171 =
+  17.1°C)
 - Home Assistant handles display unit conversion based on user preferences
 
 ### Control Endpoints
@@ -71,7 +77,8 @@ All use GET requests:
 
 - **Temperature** — Current room temperature
 - **Humidity** — Current room humidity
-- **Atmospheric Pressure** — Barometric pressure in hPa (used for altitude compensation)
+- **Atmospheric Pressure** — Barometric pressure in hPa (used for altitude
+  compensation)
 
 #### Heater Diagnostics
 
@@ -111,7 +118,8 @@ All use GET requests:
 
 ### Binary Sensors
 
-- **Connection** — Device connectivity status (always available, even when device is offline)
+- **Connection** — Device connectivity status (always available, even when
+  device is offline)
 
 ## Advanced Behavior
 
@@ -135,8 +143,10 @@ When turning the climate entity on/off:
 
 ### Error Handling
 
-- **Automatic Retry**: Failed API calls are retried up to 3 times with exponential backoff
-- **Graceful Degradation**: Entities remain available with last known data for up to 50 seconds during network issues
+- **Automatic Retry**: Failed API calls are retried up to 3 times with
+  exponential backoff
+- **Graceful Degradation**: Entities remain available with last known data for
+  up to 50 seconds during network issues
 - **Connection Monitoring**: Binary sensor shows real-time connection status
 
 ## Platforms Summary
@@ -151,7 +161,8 @@ When turning the climate entity on/off:
 
 ## Device Compatibility
 
-This integration works with Rixens RV heating systems that have a WiFi connection and expose an HTTP interface on port 80.
+This integration works with Rixens RV heating systems that have a WiFi
+connection and expose an HTTP interface on port 80.
 
 ### Tested Devices
 
@@ -170,4 +181,5 @@ Firmware versions known to work:
 
 ## Contributing
 
-For branching strategy, testing requirements, running tests, and deploying to your Home Assistant instance, see [CONTRIBUTING.md](CONTRIBUTING.md).
+For branching strategy, testing requirements, running tests, and deploying to
+your Home Assistant instance, see [CONTRIBUTING.md](CONTRIBUTING.md).

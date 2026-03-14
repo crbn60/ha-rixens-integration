@@ -5,15 +5,19 @@
 [![GitHub Release](https://img.shields.io/github/v/release/crbn60/ha-rixens-integration)](https://github.com/crbn60/ha-rixens-integration/releases)
 [![GitHub Issues](https://img.shields.io/github/issues/crbn60/ha-rixens-integration)](https://github.com/crbn60/ha-rixens-integration/issues)
 
-Control your RV's heating system from your phone, tablet, or any Home Assistant dashboard. Set temperatures, switch between heat sources, and get alerts — all without walking to the thermostat.
+Control your Rixens heating system from your phone, tablet, or any Home
+Assistant dashboard. Set temperatures, switch between heat sources, and get
+alerts — all without walking to the thermostat.
 
 ![Rixens dashboard screenshot](docs/dashboard-screenshot.png)
 
 ## What You Need
 
-- A **Rixens RV heater** connected to your local WiFi network
+- A **Rixens heating system** connected to your local WiFi network (a beta
+  firmware may be required)
 - **Home Assistant** (2023.1 or later)
-- **HACS** installed ([how to install HACS](https://hacs.xyz/docs/use/download/download/))
+- **HACS** installed
+  ([how to install HACS](https://hacs.xyz/docs/use/download/download/))
 
 ## Installation
 
@@ -24,19 +28,24 @@ Control your RV's heating system from your phone, tablet, or any Home Assistant 
 3. Select **Integration** as the category, then click **Add**
 4. Search for "Rixens" and install it
 5. **Restart Home Assistant**
-6. Go to **Settings** > **Devices & Services** > **Add Integration** > search "Rixens"
+6. Go to **Settings** > **Devices & Services** > **Add Integration** > search
+   "Rixens"
 7. Enter your device's IP address — done!
 
 ### Manual Installation
 
-1. Download the latest release from the [releases page](https://github.com/crbn60/ha-rixens-integration/releases)
-2. Copy the `custom_components/rixens` folder into your Home Assistant `custom_components` directory
+1. Download the latest release from the
+   [releases page](https://github.com/crbn60/ha-rixens-integration/releases)
+2. Copy the `custom_components/rixens` folder into your Home Assistant
+   `custom_components` directory
 3. Restart Home Assistant
-4. Add the integration via **Settings** > **Devices & Services** > **Add Integration** > search "Rixens"
+4. Add the integration via **Settings** > **Devices & Services** > **Add
+   Integration** > search "Rixens"
 
 ## Features
 
-Once installed, you get full control of your Rixens heater right from Home Assistant:
+Once installed, you get full control of your Rixens heater right from Home
+Assistant:
 
 | What you can do                       | How                                                              |
 | ------------------------------------- | ---------------------------------------------------------------- |
@@ -49,7 +58,8 @@ Once installed, you get full control of your Rixens heater right from Home Assis
 | Track heater diagnostics              | Battery voltage, flame temp, fuel consumption, runtime, and more |
 | Check connectivity                    | Connection status binary sensor                                  |
 
-All temperature values automatically display in your preferred units (Celsius or Fahrenheit) based on your Home Assistant settings.
+All temperature values automatically display in your preferred units (Celsius or
+Fahrenheit) based on your Home Assistant settings.
 
 ## Setting Up Presets
 
@@ -65,11 +75,15 @@ Customize the preset temperatures to match your comfort preferences:
 
 ## Automation Ideas
 
-Home Assistant lets you automate your heating based on schedules, location, sensors, and more. You can create automations using the visual editor in **Settings** > **Automations & Scenes** — no YAML required. Below are a few ideas with YAML examples for reference.
+Home Assistant lets you automate your heating based on schedules, location,
+sensors, and more. You can create automations using the visual editor in
+**Settings** > **Automations & Scenes** — no YAML required. Below are a few
+ideas with YAML examples for reference.
 
 ### Freeze Protection When You Leave
 
-Automatically set Away mode when you've been gone for 30 minutes, keeping your RV above freezing without wasting fuel.
+Automatically set Away mode when you've been gone for 30 minutes, keeping your
+RV above freezing without wasting fuel.
 
 ```yaml
 automation:
@@ -90,7 +104,8 @@ automation:
 
 ### Low Battery Alert
 
-Get a phone notification when your RV battery drops below 12V so you can plug in before it's too late.
+Get a phone notification when your RV battery drops below 12V so you can plug in
+before it's too late.
 
 ```yaml
 automation:
@@ -103,12 +118,15 @@ automation:
       - service: notify.mobile_app
         data:
           title: "Low RV Battery"
-          message: "Battery voltage is {{ states('sensor.rixens_heater_battery_voltage') }}V"
+          message:
+            "Battery voltage is {{
+            states('sensor.rixens_heater_battery_voltage') }}V"
 ```
 
 ### Switch to Electric Heat on Shore Power
 
-Save fuel by automatically switching to electric heat when you plug into shore power.
+Save fuel by automatically switching to electric heat when you plug into shore
+power.
 
 ```yaml
 automation:
@@ -132,7 +150,8 @@ automation:
 
 ### Pre-Heat Before You Arrive
 
-Use geofencing to start heating your RV as you approach — walk into a warm space.
+Use geofencing to start heating your RV as you approach — walk into a warm
+space.
 
 ```yaml
 automation:
@@ -155,28 +174,37 @@ automation:
 ### Device not responding?
 
 - Make sure the heater is powered on and connected to WiFi
-- Try visiting `http://<your-device-ip>/status.xml` in a browser — you should see XML data
+- Try visiting `http://<your-device-ip>/status.xml` in a browser — you should
+  see XML data
 - Make sure Home Assistant and the Rixens device are on the same network
 
 ### Sensors showing "Unavailable"?
 
-- Check the **Connection** binary sensor (`binary_sensor.rixens_heater_connection`) to see if the device is reachable
-- The integration automatically retries failed connections and keeps the last known data for about 50 seconds during brief network hiccups
+- Check the **Connection** binary sensor
+  (`binary_sensor.rixens_heater_connection`) to see if the device is reachable
+- The integration automatically retries failed connections and keeps the last
+  known data for about 50 seconds during brief network hiccups
 - If sensors stay unavailable, check your Home Assistant logs for error details
 
 ### Updates seem slow?
 
 - The integration polls your device every 5 seconds by default
-- Slow updates usually indicate network latency — check your WiFi signal at the device
+- Slow updates usually indicate network latency — check your WiFi signal at the
+  device
 
 ### Still stuck?
 
-- Search existing [issues](https://github.com/crbn60/ha-rixens-integration/issues) — someone may have had the same problem
-- Open a [new issue](https://github.com/crbn60/ha-rixens-integration/issues/new) with your Home Assistant version, integration version, and relevant logs
+- Search existing
+  [issues](https://github.com/crbn60/ha-rixens-integration/issues) — someone may
+  have had the same problem
+- Open a [new issue](https://github.com/crbn60/ha-rixens-integration/issues/new)
+  with your Home Assistant version, integration version, and relevant logs
 
 ## Contributing
 
-Contributions are welcome! See [DEVELOPER.md](DEVELOPER.md) for project architecture, entity details, and development guidelines. For major changes, please open an issue first to discuss.
+Contributions are welcome! See [DEVELOPER.md](DEVELOPER.md) for project
+architecture, entity details, and development guidelines. For major changes,
+please open an issue first to discuss.
 
 ## Changelog
 
@@ -184,7 +212,8 @@ See [CHANGELOG.md](CHANGELOG.md) for a detailed list of changes in each version.
 
 ## License
 
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file
+for details.
 
 ## Acknowledgments
 
@@ -193,4 +222,5 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 
 ---
 
-**Disclaimer**: This is a community-developed integration and is not officially affiliated with or endorsed by Rixens. Use at your own risk.
+**Disclaimer**: This is a community-developed integration and is not officially
+affiliated with or endorsed by Rixens. Use at your own risk.
