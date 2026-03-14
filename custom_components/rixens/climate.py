@@ -27,6 +27,7 @@ from .const import (
     DOMAIN,
     FAN_MODE_AUTO,
     FAN_MODE_OFF,
+    FAN_SPEED_AUTO,
     FAN_SPEED_MAX,
     FAN_SPEED_MIN,
     FAN_SPEED_STEP,
@@ -262,17 +263,20 @@ class RixensClimate(CoordinatorEntity[RixensCoordinator], ClimateEntity):
     async def async_set_fan_mode(self, fan_mode: str) -> None:
         """Set new fan mode.
 
-        Off/auto use the fan on/off control (act=8).
-        Manual speeds use the fan speed control (act=2).
+        Off: turn fan off (act=8, val=0).
+        Auto: turn fan on (act=8, val=1), then set auto speed (act=2, val=999).
+        Manual: turn fan on (act=8, val=1), then set speed (act=2, val=N).
         """
         if fan_mode == FAN_MODE_OFF:
             await self.coordinator.api.set_fan(False)
         elif fan_mode == FAN_MODE_AUTO:
             await self.coordinator.api.set_fan(True)
+            await self.coordinator.api.set_fan_speed(FAN_SPEED_AUTO)
         else:
             speed = int(fan_mode)
             if not FAN_SPEED_MIN <= speed <= FAN_SPEED_MAX:
                 return
+            await self.coordinator.api.set_fan(True)
             await self.coordinator.api.set_fan_speed(speed)
         await self.coordinator.async_request_refresh()
 

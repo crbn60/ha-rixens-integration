@@ -13,6 +13,7 @@ DEFAULT_PORT = 80
 FAN_SPEED_MIN = 10
 FAN_SPEED_MAX = 100
 FAN_SPEED_STEP = 10
+FAN_SPEED_AUTO = 999
 
 # Fan mode values reported by the device XML (<fanspeed> element)
 DEVICE_FAN_OFF = "Off"

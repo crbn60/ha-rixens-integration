@@ -256,11 +256,12 @@ class TestClimateActions:
         climate = RixensClimate(mock_coordinator)
         await climate.async_set_fan_mode("auto")
         mock_coordinator.api.set_fan.assert_awaited_once_with(True)
-        mock_coordinator.api.set_fan_speed.assert_not_awaited()
+        mock_coordinator.api.set_fan_speed.assert_awaited_once_with(999)
 
     async def test_set_fan_mode_manual(self, mock_coordinator):
         climate = RixensClimate(mock_coordinator)
         await climate.async_set_fan_mode("50")
+        mock_coordinator.api.set_fan.assert_awaited_once_with(True)
         mock_coordinator.api.set_fan_speed.assert_awaited_once_with(50)
 
     async def test_set_fan_mode_out_of_range(self, mock_coordinator):
