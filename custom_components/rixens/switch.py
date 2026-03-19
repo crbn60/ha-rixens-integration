@@ -16,6 +16,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .api import RixensApi, RixensData
 from .const import DOMAIN
 from .coordinator import RixensCoordinator
+from .sensor import _compute_fan_speed
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -25,6 +26,7 @@ class RixensSwitchEntityDescription(SwitchEntityDescription):
     value_fn: Callable[[RixensData], bool]
     turn_on_fn: Callable[[RixensApi], Awaitable[None]]
     turn_off_fn: Callable[[RixensApi], Awaitable[None]]
+    extra_attr_fn: Callable[[RixensData], dict[str, Any]] | None = None
 
 
 SWITCH_DESCRIPTIONS: tuple[RixensSwitchEntityDescription, ...] = (
@@ -55,6 +57,7 @@ SWITCH_DESCRIPTIONS: tuple[RixensSwitchEntityDescription, ...] = (
         value_fn=lambda data: data.settings.fan_state,
         turn_on_fn=lambda api: api.set_fan(True),
         turn_off_fn=lambda api: api.set_fan(False),
+        extra_attr_fn=lambda data: {"fan_speed": _compute_fan_speed(data)},
     ),
     RixensSwitchEntityDescription(
         key="continuous_heat",
@@ -102,6 +105,13 @@ class RixensSwitch(CoordinatorEntity[RixensCoordinator], SwitchEntity):
         """Return True if the switch is on."""
         if self.coordinator.data:
             return self.entity_description.value_fn(self.coordinator.data)
+        return None
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any] | None:
+        """Return extra state attributes."""
+        if self.coordinator.data and self.entity_description.extra_attr_fn:
+            return self.entity_description.extra_attr_fn(self.coordinator.data)
         return None
 
     async def async_turn_on(self, **kwargs: Any) -> None:

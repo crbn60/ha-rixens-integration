@@ -119,6 +119,16 @@ class TestSwitchEntity:
         switch = self._make_switch(mock_coordinator, "fan")
         assert switch.is_on is False
 
+    def test_fan_extra_attrs_on(self, mock_coordinator):
+        mock_coordinator.data = make_rixens_data(fan_state=True, fan_speed="70")
+        switch = self._make_switch(mock_coordinator, "fan")
+        assert switch.extra_state_attributes == {"fan_speed": 70}
+
+    def test_fan_extra_attrs_off(self, mock_coordinator):
+        mock_coordinator.data = make_rixens_data(fan_state=False, fan_speed="70")
+        switch = self._make_switch(mock_coordinator, "fan")
+        assert switch.extra_state_attributes == {"fan_speed": 0}
+
     async def test_fan_turn_on(self, mock_coordinator):
         switch = self._make_switch(mock_coordinator, "fan")
         await switch.async_turn_on()
