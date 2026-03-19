@@ -86,6 +86,9 @@
       },
       "heat_firmware_version": {
         "name": "Heat firmware version"
+      },
+      "effective_fan_speed": {
+        "name": "Fan speed"
       }
     },
     "switch": {

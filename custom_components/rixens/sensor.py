@@ -27,7 +27,15 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .api import RixensData
-from .const import CONF_FUEL_DOSE, DEFAULT_FUEL_DOSE, DOMAIN
+from .const import (
+    CONF_FUEL_DOSE,
+    DEFAULT_FUEL_DOSE,
+    DEVICE_FAN_AUTO,
+    DEVICE_FAN_OFF,
+    DOMAIN,
+    FAN_SPEED_MAX,
+    FAN_SPEED_MIN,
+)
 from .coordinator import RixensCoordinator
 
 
@@ -36,6 +44,27 @@ class RixensSensorEntityDescription(SensorEntityDescription):
     """Describes a Rixens sensor entity."""
 
     value_fn: Callable[[RixensData], float | int | str | None]
+    icon_fn: Callable[[float | int | str | None], str] | None = None
+
+
+def _compute_fan_speed(data: RixensData) -> int:
+    """Compute effective fan speed across all modes.
+
+    Returns 0 when fan is off, PID speed in auto mode, or configured speed in manual.
+    """
+    fan_speed = data.settings.fan_speed
+    if fan_speed == DEVICE_FAN_OFF:
+        return 0
+    if fan_speed == DEVICE_FAN_AUTO:
+        pid = data.heater.pid_speed
+        if pid == 0:
+            return 0
+        return max(FAN_SPEED_MIN, min(FAN_SPEED_MAX, pid))
+    try:
+        speed = int(fan_speed)
+        return max(FAN_SPEED_MIN, min(FAN_SPEED_MAX, speed))
+    except ValueError:
+        return 0
 
 
 SENSOR_DESCRIPTIONS: tuple[RixensSensorEntityDescription, ...] = (
@@ -168,6 +197,14 @@ SENSOR_DESCRIPTIONS: tuple[RixensSensorEntityDescription, ...] = (
         entity_category=EntityCategory.DIAGNOSTIC,
         value_fn=lambda data: data.heat_version,
     ),
+    RixensSensorEntityDescription(
+        key="effective_fan_speed",
+        translation_key="effective_fan_speed",
+        native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        value_fn=_compute_fan_speed,
+        icon_fn=lambda val: "mdi:fan-off" if val == 0 else "mdi:fan",
+    ),
 )
 
 
@@ -201,6 +238,13 @@ class RixensSensor(CoordinatorEntity[RixensCoordinator], SensorEntity):
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, coordinator.config_entry.entry_id)},
         )
+
+    @property
+    def icon(self) -> str | None:
+        """Return a dynamic icon if the description provides icon_fn."""
+        if self.entity_description.icon_fn is not None:
+            return self.entity_description.icon_fn(self.native_value)
+        return None
 
     @property
     def native_value(self) -> float | int | str | None:

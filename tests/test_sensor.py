@@ -11,6 +11,7 @@ from custom_components.rixens.sensor import (
     SENSOR_DESCRIPTIONS,
     RixensSensor,
     RixensSensorEntityDescription,
+    _compute_fan_speed,
 )
 
 from .conftest import make_rixens_data
@@ -101,3 +102,79 @@ class TestSensorEntity:
         for desc in SENSOR_DESCRIPTIONS:
             sensor = RixensSensor(mock_coordinator, desc)
             assert sensor.native_value is not None
+
+    def test_effective_fan_speed_auto_mode(self, mock_coordinator):
+        """In auto mode, effective fan speed returns PID speed."""
+        mock_coordinator.data = make_rixens_data(fan_speed="Auto", pid_speed=73)
+        sensor = self._make_sensor(mock_coordinator, "effective_fan_speed")
+        assert sensor.native_value == 73
+
+    def test_effective_fan_speed_auto_pid_zero(self, mock_coordinator):
+        """In auto mode with PID=0, effective fan speed returns 0."""
+        mock_coordinator.data = make_rixens_data(fan_speed="Auto", pid_speed=0)
+        sensor = self._make_sensor(mock_coordinator, "effective_fan_speed")
+        assert sensor.native_value == 0
+
+    def test_effective_fan_speed_off(self, mock_coordinator):
+        """When fan is off, effective fan speed returns 0."""
+        mock_coordinator.data = make_rixens_data(fan_speed="Off")
+        sensor = self._make_sensor(mock_coordinator, "effective_fan_speed")
+        assert sensor.native_value == 0
+
+    def test_effective_fan_speed_manual(self, mock_coordinator):
+        """In manual mode, effective fan speed returns configured speed."""
+        mock_coordinator.data = make_rixens_data(fan_speed="50")
+        sensor = self._make_sensor(mock_coordinator, "effective_fan_speed")
+        assert sensor.native_value == 50
+
+    def test_effective_fan_speed_icon_off(self, mock_coordinator):
+        """Icon shows fan-off when speed is 0."""
+        mock_coordinator.data = make_rixens_data(fan_speed="Off")
+        sensor = self._make_sensor(mock_coordinator, "effective_fan_speed")
+        assert sensor.icon == "mdi:fan-off"
+
+    def test_effective_fan_speed_icon_on(self, mock_coordinator):
+        """Icon shows fan when speed > 0."""
+        mock_coordinator.data = make_rixens_data(fan_speed="Auto", pid_speed=73)
+        sensor = self._make_sensor(mock_coordinator, "effective_fan_speed")
+        assert sensor.icon == "mdi:fan"
+
+
+class TestComputeFanSpeed:
+    """Tests for the _compute_fan_speed helper function."""
+
+    def test_fan_off(self):
+        data = make_rixens_data(fan_speed="Off")
+        assert _compute_fan_speed(data) == 0
+
+    def test_auto_with_pid(self):
+        data = make_rixens_data(fan_speed="Auto", pid_speed=50)
+        assert _compute_fan_speed(data) == 50
+
+    def test_auto_pid_zero(self):
+        data = make_rixens_data(fan_speed="Auto", pid_speed=0)
+        assert _compute_fan_speed(data) == 0
+
+    def test_auto_pid_clamped_low(self):
+        data = make_rixens_data(fan_speed="Auto", pid_speed=3)
+        assert _compute_fan_speed(data) == 10
+
+    def test_auto_pid_clamped_high(self):
+        data = make_rixens_data(fan_speed="Auto", pid_speed=150)
+        assert _compute_fan_speed(data) == 100
+
+    def test_manual_speed(self):
+        data = make_rixens_data(fan_speed="70")
+        assert _compute_fan_speed(data) == 70
+
+    def test_manual_clamped_low(self):
+        data = make_rixens_data(fan_speed="5")
+        assert _compute_fan_speed(data) == 10
+
+    def test_manual_clamped_high(self):
+        data = make_rixens_data(fan_speed="200")
+        assert _compute_fan_speed(data) == 100
+
+    def test_invalid_value(self):
+        data = make_rixens_data(fan_speed="bogus")
+        assert _compute_fan_speed(data) == 0
