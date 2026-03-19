@@ -29,6 +29,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .api import RixensData
 from .const import CONF_FUEL_DOSE, DEFAULT_FUEL_DOSE, DOMAIN
 from .coordinator import RixensCoordinator
+from .fan import compute_fan_speed
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -36,6 +37,7 @@ class RixensSensorEntityDescription(SensorEntityDescription):
     """Describes a Rixens sensor entity."""
 
     value_fn: Callable[[RixensData], float | int | str | None]
+    icon_fn: Callable[[float | int | str | None], str | None] | None = None
 
 
 SENSOR_DESCRIPTIONS: tuple[RixensSensorEntityDescription, ...] = (
@@ -170,6 +172,14 @@ SENSOR_DESCRIPTIONS: tuple[RixensSensorEntityDescription, ...] = (
         entity_category=EntityCategory.DIAGNOSTIC,
         value_fn=lambda data: data.heat_version,
     ),
+    RixensSensorEntityDescription(
+        key="effective_fan_speed",
+        translation_key="effective_fan_speed",
+        native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        value_fn=lambda data: compute_fan_speed(data),
+        icon_fn=lambda val: "mdi:fan-off" if val == 0 else "mdi:fan",
+    ),
 )
 
 
@@ -203,6 +213,13 @@ class RixensSensor(CoordinatorEntity[RixensCoordinator], SensorEntity):
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, coordinator.config_entry.entry_id)},
         )
+
+    @property
+    def icon(self) -> str | None:
+        """Return the icon for the sensor."""
+        if self.entity_description.icon_fn is not None:
+            return self.entity_description.icon_fn(self.native_value)
+        return None
 
     @property
     def native_value(self) -> float | int | str | None:

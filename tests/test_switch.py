@@ -107,28 +107,6 @@ class TestSwitchEntity:
         await switch.async_turn_off()
         mock_coordinator.api.set_electric_heat.assert_awaited_once_with(False)
 
-    # --- Fan ---
-
-    def test_fan_on(self, mock_coordinator):
-        mock_coordinator.data = make_rixens_data(fan_state=True)
-        switch = self._make_switch(mock_coordinator, "fan")
-        assert switch.is_on is True
-
-    def test_fan_off(self, mock_coordinator):
-        mock_coordinator.data = make_rixens_data(fan_state=False)
-        switch = self._make_switch(mock_coordinator, "fan")
-        assert switch.is_on is False
-
-    async def test_fan_turn_on(self, mock_coordinator):
-        switch = self._make_switch(mock_coordinator, "fan")
-        await switch.async_turn_on()
-        mock_coordinator.api.set_fan.assert_awaited_once_with(True)
-
-    async def test_fan_turn_off(self, mock_coordinator):
-        switch = self._make_switch(mock_coordinator, "fan")
-        await switch.async_turn_off()
-        mock_coordinator.api.set_fan.assert_awaited_once_with(False)
-
     # --- Continuous heat ---
 
     def test_continuous_heat_on(self, mock_coordinator):

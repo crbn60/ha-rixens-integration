@@ -96,6 +96,31 @@ class TestSensorEntity:
         # so the special handling is skipped and raw 0.0 is returned
         assert sensor.native_value == 0.0
 
+    def test_effective_fan_speed_auto(self, mock_coordinator):
+        mock_coordinator.data = make_rixens_data(fan_state=True, fan_speed="Auto", pid_speed=73)
+        sensor = self._make_sensor(mock_coordinator, "effective_fan_speed")
+        assert sensor.native_value == 73
+
+    def test_effective_fan_speed_off(self, mock_coordinator):
+        mock_coordinator.data = make_rixens_data(fan_state=False)
+        sensor = self._make_sensor(mock_coordinator, "effective_fan_speed")
+        assert sensor.native_value == 0
+
+    def test_effective_fan_speed_manual(self, mock_coordinator):
+        mock_coordinator.data = make_rixens_data(fan_state=True, fan_speed="50")
+        sensor = self._make_sensor(mock_coordinator, "effective_fan_speed")
+        assert sensor.native_value == 50
+
+    def test_effective_fan_speed_icon_on(self, mock_coordinator):
+        mock_coordinator.data = make_rixens_data(fan_state=True, fan_speed="50")
+        sensor = self._make_sensor(mock_coordinator, "effective_fan_speed")
+        assert sensor.icon == "mdi:fan"
+
+    def test_effective_fan_speed_icon_off(self, mock_coordinator):
+        mock_coordinator.data = make_rixens_data(fan_state=False)
+        sensor = self._make_sensor(mock_coordinator, "effective_fan_speed")
+        assert sensor.icon == "mdi:fan-off"
+
     def test_all_sensors_instantiate(self, mock_coordinator):
         """Verify all sensor descriptions can create entities."""
         for desc in SENSOR_DESCRIPTIONS:

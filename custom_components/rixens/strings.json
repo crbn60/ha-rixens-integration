@@ -86,14 +86,19 @@
       },
       "heat_firmware_version": {
         "name": "Heat firmware version"
+      },
+      "effective_fan_speed": {
+        "name": "Effective fan speed"
+      }
+    },
+    "fan": {
+      "fan": {
+        "name": "Fan"
       }
     },
     "switch": {
       "furnace": {
         "name": "Furnace"
-      },
-      "fan": {
-        "name": "Fan"
       },
       "floor_heat": {
         "name": "Floor heat"
@@ -103,11 +108,6 @@
       },
       "continuous_heat": {
         "name": "Continuous heat"
-      }
-    },
-    "number": {
-      "fan_speed": {
-        "name": "Fan speed"
       }
     }
   }
