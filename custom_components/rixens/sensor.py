@@ -52,14 +52,14 @@ def _compute_fan_speed(data: RixensData) -> int:
 
     Returns 0 when fan is off, PID speed in auto mode, or configured speed in manual.
     """
+    if not data.settings.fan_state:
+        return 0
     fan_speed = data.settings.fan_speed
     if fan_speed == DEVICE_FAN_OFF:
         return 0
     if fan_speed == DEVICE_FAN_AUTO:
         pid = data.heater.pid_speed
-        if pid == 0:
-            return 0
-        return max(FAN_SPEED_MIN, min(FAN_SPEED_MAX, pid))
+        return min(FAN_SPEED_MAX, max(0, pid))
     try:
         speed = int(fan_speed)
         return max(FAN_SPEED_MIN, min(FAN_SPEED_MAX, speed))

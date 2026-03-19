@@ -155,9 +155,9 @@ class TestComputeFanSpeed:
         data = make_rixens_data(fan_speed="Auto", pid_speed=0)
         assert _compute_fan_speed(data) == 0
 
-    def test_auto_pid_clamped_low(self):
+    def test_auto_pid_low(self):
         data = make_rixens_data(fan_speed="Auto", pid_speed=3)
-        assert _compute_fan_speed(data) == 10
+        assert _compute_fan_speed(data) == 3
 
     def test_auto_pid_clamped_high(self):
         data = make_rixens_data(fan_speed="Auto", pid_speed=150)
@@ -177,4 +177,14 @@ class TestComputeFanSpeed:
 
     def test_invalid_value(self):
         data = make_rixens_data(fan_speed="bogus")
+        assert _compute_fan_speed(data) == 0
+
+    def test_fan_state_off_returns_zero(self):
+        """Fan switch off should return 0 regardless of fan_speed setting."""
+        data = make_rixens_data(fan_speed="70", fan_state=False)
+        assert _compute_fan_speed(data) == 0
+
+    def test_fan_state_off_auto_returns_zero(self):
+        """Fan switch off in auto mode should return 0 regardless of PID speed."""
+        data = make_rixens_data(fan_speed="Auto", pid_speed=50, fan_state=False)
         assert _compute_fan_speed(data) == 0
