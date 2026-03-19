@@ -81,7 +81,9 @@ class RixensCoordinator(DataUpdateCoordinator[RixensData]):
                 )
                 self._is_available = False
 
-            raise UpdateFailed(f"Error communicating with Rixens device: {err}") from err
+            raise UpdateFailed(
+                f"Error communicating with Rixens device: {err}"
+            ) from err
 
     @property
     def is_available(self) -> bool:

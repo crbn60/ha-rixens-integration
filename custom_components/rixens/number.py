@@ -12,7 +12,14 @@ from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DEVICE_FAN_AUTO, DEVICE_FAN_OFF, DOMAIN, FAN_SPEED_MAX, FAN_SPEED_MIN, FAN_SPEED_STEP
+from .const import (
+    DEVICE_FAN_AUTO,
+    DEVICE_FAN_OFF,
+    DOMAIN,
+    FAN_SPEED_MAX,
+    FAN_SPEED_MIN,
+    FAN_SPEED_STEP,
+)
 from .coordinator import RixensCoordinator
 
 
@@ -93,7 +100,9 @@ class RixensFanSpeed(CoordinatorEntity[RixensCoordinator], NumberEntity):
         # Add configured speed when in manual mode
         if not is_auto:
             try:
-                attributes["configured_speed"] = int(self.coordinator.data.settings.fan_speed)
+                attributes["configured_speed"] = int(
+                    self.coordinator.data.settings.fan_speed
+                )
             except ValueError:
                 pass
 
