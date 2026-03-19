@@ -143,7 +143,9 @@ class RixensFan(CoordinatorEntity[RixensCoordinator], FanEntity):
         if preset_mode == PRESET_MODE_AUTO:
             await self.coordinator.api.set_fan_speed(999)
         elif percentage is not None:
-            speed = percentage_to_ordered_list_item(ORDERED_NAMED_FAN_SPEEDS, percentage)
+            speed = percentage_to_ordered_list_item(
+                ORDERED_NAMED_FAN_SPEEDS, percentage
+            )
             await self.coordinator.api.set_fan_speed(speed)
 
         await self.coordinator.async_request_refresh()

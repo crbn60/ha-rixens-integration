@@ -5,7 +5,6 @@ from __future__ import annotations
 import asyncio
 import logging
 from dataclasses import dataclass
-from typing import Any
 from xml.etree import ElementTree
 
 import aiohttp
@@ -154,7 +153,9 @@ class RixensApi:
                         retries,
                         RETRY_DELAY * (attempt + 1),
                     )
-                    await asyncio.sleep(RETRY_DELAY * (attempt + 1))  # Exponential backoff
+                    await asyncio.sleep(
+                        RETRY_DELAY * (attempt + 1)
+                    )  # Exponential backoff
                 else:
                     _LOGGER.error("%s after %d attempts", error_msg, retries)
             except aiohttp.ClientError as err:
@@ -168,14 +169,20 @@ class RixensApi:
                         retries,
                         RETRY_DELAY * (attempt + 1),
                     )
-                    await asyncio.sleep(RETRY_DELAY * (attempt + 1))  # Exponential backoff
+                    await asyncio.sleep(
+                        RETRY_DELAY * (attempt + 1)
+                    )  # Exponential backoff
                 else:
                     _LOGGER.error("%s after %d attempts", error_msg, retries)
 
         # All retries failed
         if isinstance(last_error, asyncio.TimeoutError):
-            raise RixensConnectionError(f"Timeout connecting to {url} after {retries} attempts") from last_error
-        raise RixensConnectionError(f"Error connecting to {url} after {retries} attempts: {last_error}") from last_error
+            raise RixensConnectionError(
+                f"Timeout connecting to {url} after {retries} attempts"
+            ) from last_error
+        raise RixensConnectionError(
+            f"Error connecting to {url} after {retries} attempts: {last_error}"
+        ) from last_error
 
     async def test_connection(self) -> bool:
         """Test the connection to the device."""
@@ -207,13 +214,17 @@ class RixensApi:
             except ValueError:
                 return default
 
-        def get_float(parent: ElementTree.Element, tag: str, default: float = 0.0) -> float:
+        def get_float(
+            parent: ElementTree.Element, tag: str, default: float = 0.0
+        ) -> float:
             try:
                 return float(get_text(parent, tag, str(default)))
             except ValueError:
                 return default
 
-        def get_bool(parent: ElementTree.Element, tag: str, default: bool = False) -> bool:
+        def get_bool(
+            parent: ElementTree.Element, tag: str, default: bool = False
+        ) -> bool:
             return get_int(parent, tag, 1 if default else 0) == 1
 
         # Parse heater1 data
@@ -222,14 +233,26 @@ class RixensApi:
         heater1 = root.find("heater1")
         heater_data = RixensHeaterData(
             heat_on=get_bool(heater1, "heaton") if heater1 is not None else False,
-            battery_voltage=get_int(heater1, "battv") / 10.0 if heater1 is not None else 0.0,
+            battery_voltage=get_int(heater1, "battv") / 10.0
+            if heater1 is not None
+            else 0.0,
             runtime=get_int(heater1, "runtime") if heater1 is not None else 0,
             pid_speed=get_int(heater1, "pidspeed") if heater1 is not None else 0,
-            flame_temp=get_int(heater1, "flametemp") / 100.0 if heater1 is not None else 0.0,
-            inlet_temp=get_int(heater1, "inlettemp") / 100.0 if heater1 is not None else 0.0,
-            outlet_temp=get_int(heater1, "outlettemp") / 100.0 if heater1 is not None else 0.0,
-            atmospheric_pressure=get_float(heater1, "altitude") if heater1 is not None else 0.0,  # XML field "altitude" is actually pressure in hPa
-            dosing_pump=get_int(heater1, "dosingpump") / 10.0 if heater1 is not None else 0.0,
+            flame_temp=get_int(heater1, "flametemp") / 100.0
+            if heater1 is not None
+            else 0.0,
+            inlet_temp=get_int(heater1, "inlettemp") / 100.0
+            if heater1 is not None
+            else 0.0,
+            outlet_temp=get_int(heater1, "outlettemp") / 100.0
+            if heater1 is not None
+            else 0.0,
+            atmospheric_pressure=get_float(heater1, "altitude")
+            if heater1 is not None
+            else 0.0,  # XML field "altitude" is actually pressure in hPa
+            dosing_pump=get_int(heater1, "dosingpump") / 10.0
+            if heater1 is not None
+            else 0.0,
             burner_motor=get_int(heater1, "burnermotor") if heater1 is not None else 0,
             heater_state=get_int(heater1, "heaterstate") if heater1 is not None else 0,
             glow_pin=get_int(heater1, "glowpin") if heater1 is not None else 0,
@@ -249,29 +272,71 @@ class RixensApi:
         # Parse settings
         # Note: setpoint is also in tenths of a degree Celsius
         settings_elem = root.find("settings")
-        fan_speed_text = get_text(settings_elem, "fanspeed", "Auto") if settings_elem is not None else "Auto"
-        raw_setpoint = get_int(settings_elem, "setpoint", 200) if settings_elem is not None else 200
+        fan_speed_text = (
+            get_text(settings_elem, "fanspeed", "Auto")
+            if settings_elem is not None
+            else "Auto"
+        )
+        raw_setpoint = (
+            get_int(settings_elem, "setpoint", 200)
+            if settings_elem is not None
+            else 200
+        )
         settings = RixensSettings(
             setpoint=raw_setpoint / 10.0,
             fan_speed=fan_speed_text,
-            pump_state=get_bool(settings_elem, "pumpstate") if settings_elem is not None else False,
-            fan_state=get_bool(settings_elem, "fanstate") if settings_elem is not None else False,
-            floor_enable=get_bool(settings_elem, "floorenable") if settings_elem is not None else False,
-            electric_enable=get_bool(settings_elem, "electricenable") if settings_elem is not None else False,
-            engine_enable=get_bool(settings_elem, "engineenable") if settings_elem is not None else False,
-            preheat_enable=get_bool(settings_elem, "preheatenable") if settings_elem is not None else False,
-            aux_enable=get_bool(settings_elem, "auxenable") if settings_elem is not None else False,
-            fan_enabled=get_bool(settings_elem, "fanenabled") if settings_elem is not None else False,
-            therm_enabled=get_bool(settings_elem, "thermenabled") if settings_elem is not None else False,
-            glycol=get_bool(settings_elem, "glycol") if settings_elem is not None else False,
+            pump_state=get_bool(settings_elem, "pumpstate")
+            if settings_elem is not None
+            else False,
+            fan_state=get_bool(settings_elem, "fanstate")
+            if settings_elem is not None
+            else False,
+            floor_enable=get_bool(settings_elem, "floorenable")
+            if settings_elem is not None
+            else False,
+            electric_enable=get_bool(settings_elem, "electricenable")
+            if settings_elem is not None
+            else False,
+            engine_enable=get_bool(settings_elem, "engineenable")
+            if settings_elem is not None
+            else False,
+            preheat_enable=get_bool(settings_elem, "preheatenable")
+            if settings_elem is not None
+            else False,
+            aux_enable=get_bool(settings_elem, "auxenable")
+            if settings_elem is not None
+            else False,
+            fan_enabled=get_bool(settings_elem, "fanenabled")
+            if settings_elem is not None
+            else False,
+            therm_enabled=get_bool(settings_elem, "thermenabled")
+            if settings_elem is not None
+            else False,
+            glycol=get_bool(settings_elem, "glycol")
+            if settings_elem is not None
+            else False,
             # Parse heat source selection fields
-            heatsources=get_int(settings_elem, "heatsources") if settings_elem is not None else 0,
-            aux_src=get_int(settings_elem, "auxsrc") if settings_elem is not None else 0,
-            floor_src=get_int(settings_elem, "floorsrc") if settings_elem is not None else 0,
-            furnace_src=get_int(settings_elem, "furnacesrc") if settings_elem is not None else 0,
-            electric_src=get_int(settings_elem, "electricsrc") if settings_elem is not None else 0,
-            engine_src=get_int(settings_elem, "enginesrc") if settings_elem is not None else 0,
-            cnst_heat=get_int(settings_elem, "cnstheat") if settings_elem is not None else 0,
+            heatsources=get_int(settings_elem, "heatsources")
+            if settings_elem is not None
+            else 0,
+            aux_src=get_int(settings_elem, "auxsrc")
+            if settings_elem is not None
+            else 0,
+            floor_src=get_int(settings_elem, "floorsrc")
+            if settings_elem is not None
+            else 0,
+            furnace_src=get_int(settings_elem, "furnacesrc")
+            if settings_elem is not None
+            else 0,
+            electric_src=get_int(settings_elem, "electricsrc")
+            if settings_elem is not None
+            else 0,
+            engine_src=get_int(settings_elem, "enginesrc")
+            if settings_elem is not None
+            else 0,
+            cnst_heat=get_int(settings_elem, "cnstheat")
+            if settings_elem is not None
+            else 0,
         )
 
         return RixensData(

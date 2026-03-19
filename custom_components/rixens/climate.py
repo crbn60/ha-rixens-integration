@@ -5,11 +5,11 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from homeassistant.components.climate import (
+from homeassistant.components.climate import ClimateEntity
+from homeassistant.components.climate.const import (
     PRESET_AWAY,
     PRESET_HOME,
     PRESET_SLEEP,
-    ClimateEntity,
     ClimateEntityFeature,
     HVACAction,
     HVACMode,
@@ -102,9 +102,15 @@ class RixensClimate(CoordinatorEntity[RixensCoordinator], ClimateEntity):
         """Load preset temperatures from config entry options."""
         options = self.coordinator.config_entry.options
         self._preset_temps = {
-            PRESET_AWAY: options.get("preset_away_temp", DEFAULT_PRESET_TEMPS[PRESET_AWAY]),
-            PRESET_HOME: options.get("preset_home_temp", DEFAULT_PRESET_TEMPS[PRESET_HOME]),
-            PRESET_SLEEP: options.get("preset_sleep_temp", DEFAULT_PRESET_TEMPS[PRESET_SLEEP]),
+            PRESET_AWAY: options.get(
+                "preset_away_temp", DEFAULT_PRESET_TEMPS[PRESET_AWAY]
+            ),
+            PRESET_HOME: options.get(
+                "preset_home_temp", DEFAULT_PRESET_TEMPS[PRESET_HOME]
+            ),
+            PRESET_SLEEP: options.get(
+                "preset_sleep_temp", DEFAULT_PRESET_TEMPS[PRESET_SLEEP]
+            ),
         }
 
     @property

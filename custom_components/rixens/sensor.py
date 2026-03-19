@@ -28,8 +28,8 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .api import RixensData
 from .const import CONF_FUEL_DOSE, DEFAULT_FUEL_DOSE, DOMAIN
-from .fan import compute_fan_speed
 from .coordinator import RixensCoordinator
+from .fan import compute_fan_speed
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -150,7 +150,9 @@ SENSOR_DESCRIPTIONS: tuple[RixensSensorEntityDescription, ...] = (
         native_unit_of_measurement=f"{UnitOfVolume.MILLILITERS}/h",
         state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
-        value_fn=lambda data: data.heater.dosing_pump,  # Will be calculated in native_value
+        value_fn=lambda data: (
+            data.heater.dosing_pump
+        ),  # Will be calculated in native_value
     ),
     RixensSensorEntityDescription(
         key="heater_state",
@@ -226,8 +228,12 @@ class RixensSensor(CoordinatorEntity[RixensCoordinator], SensorEntity):
             value = self.entity_description.value_fn(self.coordinator.data)
 
             # Special handling for fuel consumption - apply configurable dose
-            if self.entity_description.key == "fuel_consumption" and value:
-                fuel_dose = self.coordinator.config_entry.options.get(
+            if (
+                self.entity_description.key == "fuel_consumption"
+                and value is not None
+                and isinstance(value, (int, float))
+            ):
+                fuel_dose: float = self.coordinator.config_entry.options.get(
                     CONF_FUEL_DOSE, DEFAULT_FUEL_DOSE
                 )
                 # Convert Hz to ml/h: dosing_pump (Hz) * fuel_dose (ml/dose) * 3600 (sec/hr)
