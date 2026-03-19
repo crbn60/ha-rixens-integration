@@ -2,9 +2,8 @@
 
 ## Branch Strategy
 
-- **`main`** — Stable, release-ready code. Every commit on `main` should be
-  installable via HACS without issues.
-- **`dev`** — Active development branch. All new work happens here first.
+- **`dev`** — The default branch. All development and releases happen here.
+- Feature and fix branches are created off `dev` and merged back via PR.
 
 ## Workflow
 
@@ -18,22 +17,18 @@
 
 2. Make your changes and commit.
 3. Open a pull request targeting `dev`.
-4. Once reviewed and merged into `dev`, changes are tested there before being
-   promoted.
-5. When `dev` is stable and ready for release, a PR is opened from `dev` →
-   `main` and tagged with a version.
+4. Once reviewed and merged into `dev`, changes are tested before release.
 
 ## Releases
 
-Releases are created from `main` using GitHub Releases. Each release gets a git
+Releases are created from `dev` using GitHub Releases. Each release gets a git
 tag matching the version in `manifest.json` (e.g., `v0.1.0`). HACS picks up new
 releases automatically.
 
 To cut a release:
 
-1. Merge `dev` → `main` via PR.
-2. Update `version` in `custom_components/rixens/manifest.json`.
-3. Create a GitHub Release with the tag (e.g., `v0.2.0`) and release notes.
+1. Update `version` in `custom_components/rixens/manifest.json`.
+2. Create a GitHub Release with the tag (e.g., `v0.2.0`) and release notes.
 
 ## Testing Requirements
 
@@ -87,7 +82,7 @@ they're released.
 ### Option 1: HACS Custom Repository (easiest)
 
 If you've already added this repo as a HACS custom repository, HACS installs
-from the latest release on `main` by default. To test a different branch:
+from the latest release by default. To test a different branch:
 
 1. SSH into your HA instance or use the Terminal add-on.
 2. Navigate to the integration directory:
