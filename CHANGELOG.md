@@ -41,4 +41,5 @@ and this project adheres to
 - Automatic unit conversions (temperatures, altitude, dosing pump)
 - DataUpdateCoordinator pattern for efficient updates
 
-[0.1.0]: https://github.com/crbn60/ha-rixens-integration/releases/tag/v0.1.0
+[0.1.0]:
+  https://github.com/tailgatelabs/ha-rixens-integration/releases/tag/v0.1.0
