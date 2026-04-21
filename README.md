@@ -1,9 +1,9 @@
 # Rixens Integration for Home Assistant
 
-[![Validate](https://github.com/crbn60/ha-rixens-integration/actions/workflows/validate.yml/badge.svg)](https://github.com/crbn60/ha-rixens-integration/actions/workflows/validate.yml)
+[![Validate](https://github.com/tailgatelabs/ha-rixens-integration/actions/workflows/validate.yml/badge.svg)](https://github.com/tailgatelabs/ha-rixens-integration/actions/workflows/validate.yml)
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
-[![GitHub Release](https://img.shields.io/github/v/release/crbn60/ha-rixens-integration)](https://github.com/crbn60/ha-rixens-integration/releases)
-[![GitHub Issues](https://img.shields.io/github/issues/crbn60/ha-rixens-integration)](https://github.com/crbn60/ha-rixens-integration/issues)
+[![GitHub Release](https://img.shields.io/github/v/release/tailgatelabs/ha-rixens-integration)](https://github.com/tailgatelabs/ha-rixens-integration/releases)
+[![GitHub Issues](https://img.shields.io/github/issues/tailgatelabs/ha-rixens-integration)](https://github.com/tailgatelabs/ha-rixens-integration/issues)
 
 Control your Rixens heating system from your phone, tablet, or any Home
 Assistant dashboard. Set temperatures, switch between heat sources, and get
@@ -24,7 +24,7 @@ alerts — all without walking to the thermostat.
 ### HACS (Recommended)
 
 1. Open **HACS** > **Integrations** > three-dot menu > **Custom repositories**
-2. Paste: `https://github.com/crbn60/ha-rixens-integration`
+2. Paste: `https://github.com/tailgatelabs/ha-rixens-integration`
 3. Select **Integration** as the category, then click **Add**
 4. Search for "Rixens" and install it
 5. **Restart Home Assistant**
@@ -35,7 +35,7 @@ alerts — all without walking to the thermostat.
 ### Manual Installation
 
 1. Download the latest release from the
-   [releases page](https://github.com/crbn60/ha-rixens-integration/releases)
+   [releases page](https://github.com/tailgatelabs/ha-rixens-integration/releases)
 2. Copy the `custom_components/rixens` folder into your Home Assistant
    `custom_components` directory
 3. Restart Home Assistant
@@ -195,9 +195,10 @@ automation:
 ### Still stuck?
 
 - Search existing
-  [issues](https://github.com/crbn60/ha-rixens-integration/issues) — someone may
-  have had the same problem
-- Open a [new issue](https://github.com/crbn60/ha-rixens-integration/issues/new)
+  [issues](https://github.com/tailgatelabs/ha-rixens-integration/issues) —
+  someone may have had the same problem
+- Open a
+  [new issue](https://github.com/tailgatelabs/ha-rixens-integration/issues/new)
   with your Home Assistant version, integration version, and relevant logs
 
 ## Contributing
